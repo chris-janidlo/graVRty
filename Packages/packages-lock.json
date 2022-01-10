@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "aa3948ad01df8ee8ed83712d5f5d9c1cf04663cc"
+      "hash": "e81d64830309e5ca06824cf9f9b3d9efacf4faad"
     },
     "com.mambojambostudios.unity-atoms-base-atoms": {
       "version": "4.1.0",

@@ -270,7 +270,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3673187248129036284}
   - component: {fileID: 3266247786820019245}
-  - component: {fileID: 1846715751749112007}
+  - component: {fileID: 393399663471770087}
   - component: {fileID: 1101383338058813678}
   - component: {fileID: 2597422821882115789}
   m_Layer: 5
@@ -324,7 +324,7 @@ MonoBehaviour:
   m_ConsoleCollider: {fileID: 6511753255904190009}
   m_ShrinkSphereCollider: {fileID: 6532541250355450487}
   m_SmoothFollow: {fileID: 1101383338058813678}
---- !u!114 &1846715751749112007
+--- !u!114 &393399663471770087
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -333,7 +333,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1831880157875472509}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ad34abafad169848a38072baa96cdb2, type: 3}
+  m_Script: {fileID: 11500000, guid: 4628f39194f75704e8c0004e071dda74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_InteractionManager: {fileID: 0}
@@ -451,6 +451,7 @@ MonoBehaviour:
   m_ForceGravityOnDetach: 0
   m_RetainTransformParent: 1
   m_AttachPointCompatibilityMode: 0
+  AllowHover: 1
 --- !u!114 &1101383338058813678
 MonoBehaviour:
   m_ObjectHideFlags: 0

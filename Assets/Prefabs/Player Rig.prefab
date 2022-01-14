@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2198065613599246481}
   - component: {fileID: 2198065613599246480}
   - component: {fileID: 2198065613599246483}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player Rig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 2198065613743589040}
   - component: {fileID: 9105587089229365447}
   - component: {fileID: 3507859121485304072}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Right Hand Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -378,7 +378,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2198065614062476773}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Camera Offset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -414,7 +414,8 @@ GameObject:
   - component: {fileID: 2198065614404227358}
   - component: {fileID: 2198065614404227353}
   - component: {fileID: 2198065614404227352}
-  m_Layer: 0
+  - component: {fileID: 7635990005050447639}
+  m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -459,7 +460,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 1000
+  far clip plane: 10000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -559,6 +560,19 @@ MonoBehaviour:
     m_SingletonActionBindings: []
     m_Flags: 0
   m_HasMigratedActions: 1
+--- !u!114 &7635990005050447639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2198065614404227354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da94107393573244cb15655c11c70ea0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PositionVariable: {fileID: 11400000, guid: 28c2463e73ac9e24e85af75e390ea55e, type: 2}
 --- !u!1 &2198065614589087840
 GameObject:
   m_ObjectHideFlags: 0
@@ -571,7 +585,7 @@ GameObject:
   - component: {fileID: 2198065614589087845}
   - component: {fileID: 2198065614589087846}
   - component: {fileID: 3892222543704305353}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Left Hand Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -873,7 +887,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5430808128674759722}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grab Offset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -903,7 +917,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3281801342553986678}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grab Offset
   m_TagString: Untagged
   m_Icon: {fileID: 0}

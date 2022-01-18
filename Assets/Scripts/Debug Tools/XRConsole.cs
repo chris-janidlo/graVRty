@@ -13,9 +13,10 @@ public class XRConsole : MonoBehaviour
     [SerializeField] EnumMap<LogType, Color> m_LogTypeColors;
     [SerializeField] string m_TimestampFormat;
 
+    [SerializeField] XRGrabInteractableExtended m_GrabInteractable;
     [SerializeField] TextMeshProUGUI m_TextContainer;
 
-    [SerializeField] Transform m_ConsoleParent, m_ShrinkSphereParent;
+    [SerializeField] Transform m_ConsoleParent, m_ShrinkSphereParent, m_MaximizedAttachTransform, m_MinimizedAttachTransform;
     [SerializeField] Collider m_ConsoleCollider, m_ShrinkSphereCollider;
 
     [SerializeField] SmoothFollow m_SmoothFollow;
@@ -71,6 +72,8 @@ public class XRConsole : MonoBehaviour
 
         m_ShrinkSphereParent.DOScale(maximized ? 0 : 1, m_ScaleTransitionDuration);
         m_ShrinkSphereCollider.enabled = !maximized;
+
+        m_GrabInteractable.attachTransform = maximized ? m_MaximizedAttachTransform : m_MinimizedAttachTransform;
     }
 #else // UNITY_EDITOR || DEVELOPMENT_BUILD
     void Awake ()

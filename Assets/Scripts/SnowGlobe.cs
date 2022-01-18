@@ -19,9 +19,8 @@ public class SnowGlobe : MonoBehaviour
 
     void FixedUpdate ()
     {
-        updateGravityDirection();
-
-        m_InsidesParent.rotation = m_GravityDirection.Value;
+        if (!controllingGravity) m_InsidesParent.rotation = m_GravityDirection.Value;
+        else m_GravityDirection.Value = m_InsidesParent.rotation;
     }
 
     public void OnActivated ()
@@ -32,12 +31,5 @@ public class SnowGlobe : MonoBehaviour
     public void OnDeactivated ()
     {
         controllingGravity = false;
-    }
-
-    void updateGravityDirection ()
-    {
-        if (!controllingGravity) return;
-
-        m_GravityDirection.Value = m_Rigidbody.rotation;
     }
 }

@@ -11,6 +11,10 @@ GameObject:
   - component: {fileID: 2198065613599246481}
   - component: {fileID: 2198065613599246480}
   - component: {fileID: 2198065613599246483}
+  - component: {fileID: 821487713677428878}
+  - component: {fileID: 7512695421723722527}
+  - component: {fileID: 3711023829876056146}
+  - component: {fileID: 6794946647876252121}
   m_Layer: 6
   m_Name: Player Rig
   m_TagString: Untagged
@@ -64,6 +68,95 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ActionAssets:
   - {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+--- !u!114 &821487713677428878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2198065613599246482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03a5df2202a8b96488c744be3bd0c33e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Timeout: 10
+  m_XROrigin: {fileID: 2198065613599246480}
+--- !u!114 &7512695421723722527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2198065613599246482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bf296fc962d7184ab14ad1841598d5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_System: {fileID: 821487713677428878}
+  m_MoveSpeed: 0
+  m_EnableStrafe: 0
+  m_UseGravity: 1
+  m_GravityApplicationMode: 1
+  m_ForwardSource: {fileID: 0}
+  m_LeftHandMoveAction:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Left Hand Move
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 96f7c8db-af79-487e-a0d0-4a746d0e0b7a
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+  m_RightHandMoveAction:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Right Hand Move
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: d48e74c1-b5e2-4662-aaee-44a08112d706
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+--- !u!114 &3711023829876056146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2198065613599246482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af6bf904e410ee8479f9093d8830d1f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_LocomotionProvider: {fileID: 7512695421723722527}
+  m_MinHeight: 0
+  m_MaxHeight: Infinity
+--- !u!143 &6794946647876252121
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2198065613599246482}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 2
+  m_Radius: 0.2
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2198065613743589055
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,7 +169,7 @@ GameObject:
   - component: {fileID: 2198065613743589040}
   - component: {fileID: 9105587089229365447}
   - component: {fileID: 3507859121485304072}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Right Hand Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -585,7 +678,7 @@ GameObject:
   - component: {fileID: 2198065614589087845}
   - component: {fileID: 2198065614589087846}
   - component: {fileID: 3892222543704305353}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Left Hand Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -887,7 +980,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5430808128674759722}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Grab Offset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -917,7 +1010,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3281801342553986678}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Grab Offset
   m_TagString: Untagged
   m_Icon: {fileID: 0}

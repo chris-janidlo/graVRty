@@ -1,26 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
-using UnityAtoms.BaseAtoms;
 
 public class SnowGlobe : MonoBehaviour
 {
     [SerializeField] Rigidbody m_Rigidbody;
     [SerializeField] Transform m_InsidesParent;
-    [SerializeField] QuaternionVariable m_GravityDirection;
+    [SerializeField] Gravity m_Gravity;
 
     bool controllingGravity;
 
-    void Awake ()
-    {
-        m_GravityDirection.Value = Quaternion.identity;
-    }
-
     void FixedUpdate ()
     {
-        if (!controllingGravity) m_InsidesParent.rotation = m_GravityDirection.Value;
-        else m_GravityDirection.Value = m_InsidesParent.rotation;
+        if (!controllingGravity) m_InsidesParent.rotation = m_Gravity.Rotation;
+        else m_Gravity.SetOrientation(m_InsidesParent);
     }
 
     public void OnActivated ()

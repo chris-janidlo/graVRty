@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 91562756279357173}
   - component: {fileID: 1287107450423476654}
   - component: {fileID: 7987191365559741610}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Snow Globe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -168,7 +168,7 @@ MonoBehaviour:
   m_SmoothRotation: 0
   m_SmoothRotationAmount: 5
   m_TightenRotation: 0.5
-  m_ThrowOnDetach: 0
+  m_ThrowOnDetach: 1
   m_ThrowSmoothingDuration: 0.25
   m_ThrowSmoothingCurve:
     serializedVersion: 2
@@ -229,7 +229,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2370480586810438278}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Insides Parent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -264,7 +264,7 @@ GameObject:
   - component: {fileID: 2370480586969171203}
   - component: {fileID: 2370480586969171200}
   - component: {fileID: 2370480586969171201}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Glass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -345,7 +345,7 @@ GameObject:
   - component: {fileID: 1338164102379210201}
   - component: {fileID: 3826678298928522333}
   - component: {fileID: 7470775289816549226}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -426,7 +426,7 @@ GameObject:
   - component: {fileID: 8671183363911989754}
   - component: {fileID: 5898026259308270210}
   - component: {fileID: 8411592488122942025}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -577,6 +577,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: cone
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 61c9866793abd1d45affed170882f47f,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 61c9866793abd1d45affed170882f47f, type: 3}

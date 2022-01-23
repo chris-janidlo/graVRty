@@ -286,6 +286,50 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &670933459
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 670933461}
+  - component: {fileID: 670933460}
+  m_Layer: 0
+  m_Name: Gravity Initializer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &670933460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 670933459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a2f1bddda0e3bc46b4350c99087f501, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Gravity: {fileID: 11400000, guid: b9cfaf4fb428f3b4094d5d477733696d, type: 2}
+--- !u!4 &670933461
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 670933459}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1652744685
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -500,7 +544,7 @@ PrefabInstance:
     - target: {fileID: 2198065613599246481, guid: 3dc0304d0ed3a8e449e566b5f294efa7,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.273
       objectReference: {fileID: 0}
     - target: {fileID: 2198065613599246481, guid: 3dc0304d0ed3a8e449e566b5f294efa7,
         type: 3}
@@ -561,11 +605,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1287107450423476654, guid: 28310fdd13180834fa0d21d16f2170b6,
-        type: 3}
-      propertyPath: m_UseGravity
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2370480585894007192, guid: 28310fdd13180834fa0d21d16f2170b6,
         type: 3}
       propertyPath: m_Name

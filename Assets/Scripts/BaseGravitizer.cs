@@ -7,7 +7,7 @@ public class BaseGravitizer : MonoBehaviour
 {
     [SerializeField] private Gravity m_Gravity;
     [SerializeField] private AnimationCurve m_TurnTimeByGravitySpeed, m_TurnTimeByGravityDirectionDistance;
-    [SerializeField] private float m_MaxTurnTime;
+    [SerializeField] private float m_MaxTurnTime, m_MinStopTime;
     [SerializeField] private Ease m_TurnEase, m_StopEase;
 
     public Vector3 GravityVelocity => gravityDirection * gravitySpeed;
@@ -25,7 +25,7 @@ public class BaseGravitizer : MonoBehaviour
                 break;
 
             case GravityState.Flux:
-                float decelerationTime = gravitySpeed / m_Gravity.DecelerationAmount;
+                float decelerationTime = Mathf.Max(m_MinStopTime, gravitySpeed / m_Gravity.DecelerationAmount);
                 gravitySpeedTweener?.Kill();
                 gravitySpeedTweener = DOTween
                     .To(() => gravitySpeed, v => gravitySpeed = v, 0, decelerationTime)

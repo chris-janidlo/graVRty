@@ -13,16 +13,17 @@ public class SnowGlobe : MonoBehaviour
     void FixedUpdate ()
     {
         if (!controllingGravity) m_InsidesParent.rotation = m_Gravity.Rotation;
-        else m_Gravity.SetOrientation(m_InsidesParent);
     }
 
     public void OnActivated ()
     {
         controllingGravity = true;
-   }
+        m_Gravity.StartFlux();
+    }
 
     public void OnDeactivated ()
     {
         controllingGravity = false;
+        m_Gravity.StartActive(m_InsidesParent);
     }
 }

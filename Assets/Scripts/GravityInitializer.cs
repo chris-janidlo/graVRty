@@ -8,6 +8,6 @@ public class GravityInitializer : MonoBehaviour
 
     void Awake ()
     {
-        m_Gravity.SetOrientation(transform);
+        m_Gravity.Initialize(transform);
     }
 }

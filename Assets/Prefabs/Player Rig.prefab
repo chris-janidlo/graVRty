@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 2198065613599246480}
   - component: {fileID: 2198065613599246483}
   - component: {fileID: 821487713677428878}
-  - component: {fileID: 7512695421723722527}
+  - component: {fileID: 803843817260427929}
+  - component: {fileID: 4668037877449778330}
   - component: {fileID: 3711023829876056146}
   - component: {fileID: 6794946647876252121}
   m_Layer: 6
@@ -82,7 +83,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Timeout: 10
   m_XROrigin: {fileID: 2198065613599246480}
---- !u!114 &7512695421723722527
+--- !u!114 &803843817260427929
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -91,39 +92,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 2198065613599246482}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bf296fc962d7184ab14ad1841598d5f, type: 3}
+  m_Script: {fileID: 11500000, guid: ad62690500a74c749a69858a5cbaa339, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Gravity: {fileID: 11400000, guid: b9cfaf4fb428f3b4094d5d477733696d, type: 2}
+--- !u!114 &4668037877449778330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2198065613599246482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cb178ab54ea56f4bb884730801893f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_System: {fileID: 821487713677428878}
-  m_MoveSpeed: 0
-  m_EnableStrafe: 0
-  m_UseGravity: 1
-  m_GravityApplicationMode: 1
-  m_ForwardSource: {fileID: 0}
-  m_LeftHandMoveAction:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Left Hand Move
-      m_Type: 0
-      m_ExpectedControlType: 
-      m_Id: 96f7c8db-af79-487e-a0d0-4a746d0e0b7a
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: 0}
-  m_RightHandMoveAction:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Right Hand Move
-      m_Type: 0
-      m_ExpectedControlType: 
-      m_Id: d48e74c1-b5e2-4662-aaee-44a08112d706
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: 0}
+  m_Gravitizer: {fileID: 803843817260427929}
+  m_CharacterController: {fileID: 6794946647876252121}
 --- !u!114 &3711023829876056146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,7 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af6bf904e410ee8479f9093d8830d1f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_LocomotionProvider: {fileID: 7512695421723722527}
+  m_LocomotionProvider: {fileID: 4668037877449778330}
   m_MinHeight: 0
   m_MaxHeight: Infinity
 --- !u!143 &6794946647876252121

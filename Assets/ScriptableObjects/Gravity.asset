@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Gravity
   m_EditorClassIdentifier: 
   AccelerationAmount: 9.81
-  DecelerationAmount: 20
+  DecelerationAmount: 13.08

@@ -1,14 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class BaseGravitizer : MonoBehaviour
 {
     [SerializeField] private Gravity m_Gravity;
+    [SerializeField] private AnimationCurve m_TurnTimeByGravitySpeed, m_TurnTimeByGravityDirectionDistance;
+    [SerializeField] private float m_MaxTurnTime;
+    [SerializeField] private Ease m_TurnEase, m_StopEase;
 
-    public Vector3 GravityVelocity => m_Gravity.Direction * gravitySpeed;
+    public Vector3 GravityVelocity => gravityDirection * gravitySpeed;
 
+    Vector3 gravityDirection;
     float gravitySpeed;
+    Tweener gravityDirectionTweener, gravitySpeedTweener;
 
     protected virtual void Update ()
     {
@@ -19,7 +25,11 @@ public class BaseGravitizer : MonoBehaviour
                 break;
 
             case GravityState.Flux:
-                gravitySpeed = Mathf.Max(gravitySpeed - m_Gravity.DecelerationAmount * Time.deltaTime, 0);
+                float decelerationTime = gravitySpeed / m_Gravity.DecelerationAmount;
+                gravitySpeedTweener?.Kill();
+                gravitySpeedTweener = DOTween
+                    .To(() => gravitySpeed, v => gravitySpeed = v, 0, decelerationTime)
+                    .SetEase(m_StopEase);
                 break;
         }
     }
@@ -27,6 +37,9 @@ public class BaseGravitizer : MonoBehaviour
     protected virtual void OnEnable ()
     {
         m_Gravity.OnGravityChanged += onGravityChanged;
+
+        gravityDirection = m_Gravity.Direction;
+        gravitySpeed = 0;
     }
 
     protected virtual void OnDisable ()
@@ -44,6 +57,17 @@ public class BaseGravitizer : MonoBehaviour
 
     void onGravityChanged (GravityState newState)
     {
-        if (newState == GravityState.Active) gravitySpeed = 0;
+        if (newState != GravityState.Active) return;
+
+        gravitySpeedTweener?.Kill(); // leave the gravity speed at whatever deceleration value we are currently at
+
+        float turnTime = m_MaxTurnTime *
+            m_TurnTimeByGravitySpeed.Evaluate(gravitySpeed) *
+            m_TurnTimeByGravityDirectionDistance.Evaluate(Vector3.Distance(gravityDirection, m_Gravity.Direction));
+
+        gravityDirectionTweener?.Kill();
+        gravityDirectionTweener = DOTween
+            .To(() => gravityDirection, v => gravityDirection = v, m_Gravity.Direction, turnTime)
+            .SetEase(m_TurnEase);
     }
 }

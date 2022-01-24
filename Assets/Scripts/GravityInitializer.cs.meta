@@ -5,7 +5,7 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - m_Gravity: {fileID: 11400000, guid: b9cfaf4fb428f3b4094d5d477733696d, type: 2}
-  executionOrder: 0
+  executionOrder: -50
   icon: {instanceID: 0}
   userData: 
   assetBundleName: 

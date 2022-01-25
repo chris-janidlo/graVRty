@@ -147,7 +147,7 @@ MonoBehaviour:
   m_MaxTurnTime: 2
   m_MinStopTime: 1
   m_TurnEase: 1
-  m_StopEase: 6
+  m_StopEase: 7
 --- !u!114 &4668037877449778330
 MonoBehaviour:
   m_ObjectHideFlags: 0

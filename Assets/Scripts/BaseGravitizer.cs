@@ -25,11 +25,15 @@ public class BaseGravitizer : MonoBehaviour
                 break;
 
             case GravityState.Flux:
+                if (gravitySpeedTweener?.IsActive() == true) break;
+
                 float decelerationTime = Mathf.Max(m_MinStopTime, gravitySpeed / m_Gravity.DecelerationAmount);
                 gravitySpeedTweener?.Kill();
                 gravitySpeedTweener = DOTween
                     .To(() => gravitySpeed, v => gravitySpeed = v, 0, decelerationTime)
-                    .SetEase(m_StopEase);
+                    .SetEase(m_StopEase)
+                    .OnKill(() => gravitySpeedTweener = null);
+
                 break;
         }
     }
@@ -68,6 +72,7 @@ public class BaseGravitizer : MonoBehaviour
         gravityDirectionTweener?.Kill();
         gravityDirectionTweener = DOTween
             .To(() => gravityDirection, v => gravityDirection = v, m_Gravity.Direction, turnTime)
-            .SetEase(m_TurnEase);
+            .SetEase(m_TurnEase)
+            .OnKill(() => gravityDirectionTweener = null);
     }
 }

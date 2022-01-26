@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Rigidbody: {fileID: 1287107450423476654}
   m_InsidesParent: {fileID: 2370480586810438278}
-  m_Gravity: {fileID: 11400000, guid: b9cfaf4fb428f3b4094d5d477733696d, type: 2}
+  m_Gravity: {fileID: 0}
 --- !u!114 &91562756279357173
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -5,15 +5,29 @@ using UnityEngine;
 public class RigidbodyGravitizer : MonoBehaviour
 {
     [SerializeField] Rigidbody m_Rigidbody;
-    [SerializeField] BaseGravitizer m_Gravitizer;
+    [SerializeField] Gravity m_Gravity;
+
+    Gravity.Tracker tracker;
+
+    void OnEnable ()
+    {
+        if (m_Gravity == null) m_Gravity = FindObjectOfType<Gravity>();
+
+        tracker = m_Gravity.GetNewTracker();
+    }
+
+    void OnDisable ()
+    {
+        m_Gravity.UnregisterTracker(tracker);
+    }
 
     void Update ()
     {
-        m_Rigidbody.velocity = m_Gravitizer.GravityVelocity;
+        m_Rigidbody.velocity += tracker.AcceelrationThisFrame;
     }
 
-    private void OnCollisionEnter (Collision collision)
+    private void OnCollisionStay (Collision collision)
     {
-        m_Gravitizer.Ground();
+        tracker.TrackGroundTouch();
     }
 }

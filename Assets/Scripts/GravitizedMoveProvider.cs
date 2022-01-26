@@ -5,20 +5,30 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class GravitizedMoveProvider : LocomotionProvider
 {
-    [SerializeField] BaseGravitizer m_Gravitizer;
+    [SerializeField] Gravity m_Gravity;
     [SerializeField] CharacterController m_CharacterController;
+
+    Gravity.Tracker tracker;
+
+    void OnEnable ()
+    {
+        if (m_Gravity == null) m_Gravity = FindObjectOfType<Gravity>();
+
+        tracker = m_Gravity.GetNewTracker();
+    }
+
+    void OnDisable ()
+    {
+        m_Gravity.UnregisterTracker(tracker);
+    }
 
     void Update ()
     {
-        Vector3 gravity = m_Gravitizer != null && m_Gravitizer.enabled
-            ? m_Gravitizer.GravityVelocity
-            : Vector3.zero;
-
-        if (m_CharacterController.isGrounded) m_Gravitizer.Ground();
+        if (m_CharacterController.isGrounded) tracker.TrackGroundTouch();
 
         if (CanBeginLocomotion() && BeginLocomotion())
         {
-            m_CharacterController.Move(gravity * Time.deltaTime);
+            m_CharacterController.Move(tracker.Velocity * Time.deltaTime);
             EndLocomotion();
         }
     }

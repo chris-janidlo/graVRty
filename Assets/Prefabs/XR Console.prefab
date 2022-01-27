@@ -308,6 +308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f1ce5366d400504da7ad3f9efa8e4b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_MaxLinesToDisplay: 15
   m_ScaleTransitionDuration: 0.07
   m_LogTypeColors:
     m_enums: 0100000000000000040000000300000002000000

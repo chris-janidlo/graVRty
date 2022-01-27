@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,7 @@ using crass;
 
 public class XRConsole : MonoBehaviour
 {
+    [SerializeField] int m_MaxLinesToDisplay;
     [SerializeField] float m_ScaleTransitionDuration;
     [SerializeField] EnumMap<LogType, Color> m_LogTypeColors;
     [SerializeField] string m_TimestampFormat;
@@ -23,6 +25,7 @@ public class XRConsole : MonoBehaviour
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     bool maximized;
+    readonly LinkedList<string> logLines = new LinkedList<string>();
 
     void Awake ()
     {
@@ -60,7 +63,10 @@ public class XRConsole : MonoBehaviour
         string prefix = $"<b>{type.ToString().ToUpper()}</b> @ {DateTime.Now.ToString(m_TimestampFormat)}:";
         string text = $"{prefix.WrapInTMProColorTag(m_LogTypeColors[type])} {condition}";
 
-        m_TextContainer.text += "\n\n" + text;
+        logLines.AddLast(text);
+        if (logLines.Count > m_MaxLinesToDisplay) logLines.RemoveFirst();
+
+        m_TextContainer.text = string.Join("\n\n", logLines);
     }
 
     void setMaximizedState (bool state)

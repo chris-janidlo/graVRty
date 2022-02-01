@@ -14,7 +14,7 @@ public class GravitizedMoveProvider : LocomotionProvider
     {
         if (m_Gravity == null) m_Gravity = FindObjectOfType<Gravity>();
 
-        tracker = m_Gravity.GetNewTracker();
+        tracker = m_Gravity.GetNewTracker(false);
     }
 
     void OnDisable ()

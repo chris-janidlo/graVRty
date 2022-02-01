@@ -11,15 +11,11 @@ public class Gravity : MonoBehaviour
         readonly Func<Vector3> _velocityGetter;
         public Vector3 Velocity => _velocityGetter();
 
-        readonly Func<Vector3> _accelerationGetter;
-        public Vector3 AcceelrationThisFrame => _accelerationGetter();
-
         readonly Action _groundCallback;
 
-        public Tracker (Func<Vector3> velocityGetter, Func<Vector3> accelerationGetter, Action groundCallback)
+        public Tracker (Func<Vector3> velocityGetter, Action groundCallback)
         {
             _velocityGetter = velocityGetter;
-            _accelerationGetter = accelerationGetter;
             _groundCallback = groundCallback;
         }
 
@@ -32,8 +28,6 @@ public class Gravity : MonoBehaviour
     private class InternalTracker
     {
         public Vector3 CurrentVelocity => gravityDirection * gravitySpeed;
-
-        public Vector3 AccelerationThisFrame { get; private set; }
 
         readonly Gravity gravity;
 
@@ -51,8 +45,6 @@ public class Gravity : MonoBehaviour
 
         public void Update ()
         {
-            Vector3 previousVelocity = CurrentVelocity;
-
             switch (gravity.State)
             {
                 case GravityState.Active:
@@ -66,8 +58,6 @@ public class Gravity : MonoBehaviour
                 default:
                     throw new InvalidOperationException($"unexpected GravityState {gravity.State}");
             }
-
-            AccelerationThisFrame = CurrentVelocity - previousVelocity;
         }
 
         public void OnGravityStateChanged (GravityState newState)
@@ -117,7 +107,8 @@ public class Gravity : MonoBehaviour
     public Vector3 Direction { get; private set; }
     public Quaternion Rotation { get; private set; }
 
-    readonly List<(InternalTracker, Tracker)> trackers = new List<(InternalTracker, Tracker)>();
+    readonly List<(InternalTracker, Tracker)> updateTrackers = new List<(InternalTracker, Tracker)>();
+    readonly List<(InternalTracker, Tracker)> fixedUpdateTrackers = new List<(InternalTracker, Tracker)>();
 
     void OnEnable ()
     {
@@ -127,22 +118,24 @@ public class Gravity : MonoBehaviour
 
     void Update ()
     {
-        trackers.ForEach(p => p.Item1.Update());
+        updateTrackers.ForEach(p => p.Item1.Update());
+        fixedUpdateTrackers.ForEach(p => p.Item1.Update());
     }
 
-    public Tracker GetNewTracker ()
+    public Tracker GetNewTracker (bool fixedUpdate)
     {
         InternalTracker internalTracker = new InternalTracker(this);
-        Tracker externalTracker = new Tracker(() => internalTracker.CurrentVelocity, () => internalTracker.AccelerationThisFrame, internalTracker.Ground);
+        Tracker externalTracker = new Tracker(() => internalTracker.CurrentVelocity, internalTracker.Ground);
 
-        trackers.Add((internalTracker, externalTracker));
+        (fixedUpdate ? fixedUpdateTrackers : updateTrackers).Add((internalTracker, externalTracker));
 
         return externalTracker;
     }
 
     public void UnregisterTracker (Tracker tracker)
     {
-        trackers.RemoveAll(p => p.Item2 == tracker);
+        updateTrackers.RemoveAll(p => p.Item2 == tracker);
+        fixedUpdateTrackers.RemoveAll(p => p.Item2 == tracker);
     }
 
     public void StartFlux ()
@@ -169,6 +162,7 @@ public class Gravity : MonoBehaviour
     void updateState (GravityState newState)
     {
         State = newState;
-        trackers.ForEach(p => p.Item1.OnGravityStateChanged(newState));
+        updateTrackers.ForEach(p => p.Item1.OnGravityStateChanged(newState));
+        fixedUpdateTrackers.ForEach(p => p.Item1.OnGravityStateChanged(newState));
     }
 }

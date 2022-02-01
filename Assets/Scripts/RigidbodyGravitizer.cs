@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +14,7 @@ public class RigidbodyGravitizer : MonoBehaviour
     {
         if (m_Gravity == null) m_Gravity = FindObjectOfType<Gravity>();
 
-        tracker = m_Gravity.GetNewTracker();
+        tracker = m_Gravity.GetNewTracker(true);
     }
 
     void OnDisable ()
@@ -21,9 +22,9 @@ public class RigidbodyGravitizer : MonoBehaviour
         m_Gravity.UnregisterTracker(tracker);
     }
 
-    void Update ()
+    void FixedUpdate ()
     {
-        m_Rigidbody.velocity += tracker.AcceelrationThisFrame;
+        m_Rigidbody.velocity = tracker.Velocity;
     }
 
     private void OnCollisionStay (Collision collision)

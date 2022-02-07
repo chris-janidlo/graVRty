@@ -10,11 +10,6 @@ public class SnowGlobe : MonoBehaviour
 
     bool controllingGravity;
 
-    void Start ()
-    {
-        if (m_Gravity == null) m_Gravity = FindObjectOfType<Gravity>();
-    }
-
     void FixedUpdate ()
     {
         if (!controllingGravity) m_InsidesParent.rotation = m_Gravity.Rotation;

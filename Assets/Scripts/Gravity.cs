@@ -7,57 +7,60 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "GraVRty/Gravity Manager", fileName = "newGravityManager.asset")]
 public class Gravity : ScriptableObject
 {
-    [SerializeField] float m_GravityAcceleration;
-    [SerializeField] float m_FluxDragMax, m_FluxDragTimeToMax;
-    [SerializeField] Ease m_FluxDragEase;
+    [SerializeField] float m_GravityAcceleration, m_FluxDragMax;
+    [SerializeField] AnimationCurve m_FluxDragLerpByPressStrength, m_FluxDragLerpUpdateTimeByPressState;
+
+    [Range(0, 1)]
+    [SerializeField] float m_FluxPressThreshold, m_FluxHardStopThreshold;
 
     public GravityState State { get; private set; }
     public Vector3 Direction { get; private set; }
     public Quaternion Rotation { get; private set; }
-    public float? Drag { get; private set; }
 
-    Tweener dragTweener;
+    float dragLerp, dragLerpVelocity;
 
     public void Initialize (Transform initialDirectionSource)
     {
-        State = GravityState.Flux;
-        StartActive(initialDirectionSource);
+        State = GravityState.Active;
+        setOrientation(initialDirectionSource);
     }
 
-    public void StartFlux ()
+    public void SetGravity (Transform directionSource, float strength)
     {
-        if (State == GravityState.Flux) return;
+        if (strength >= m_FluxPressThreshold)
+        {
+            updateState(GravityState.Flux);
 
-        Physics.gravity = Vector3.zero;
+            float targetDragLerp = m_FluxDragLerpByPressStrength.Evaluate(strength),
+                dragLerpUpdateTime = m_FluxDragLerpUpdateTimeByPressState.Evaluate(strength);
 
-        dragTweener = DOTween.To(v => Drag = v, 0, m_FluxDragMax, m_FluxDragTimeToMax)
-            .SetEase(m_FluxDragEase)
-            .OnKill(() => dragTweener = null);
+            dragLerp = Mathf.SmoothDamp(dragLerp, targetDragLerp, ref dragLerpVelocity, dragLerpUpdateTime);
+            setOrientation(directionSource);
 
-        updateState(GravityState.Flux);
+            if (strength >= m_FluxHardStopThreshold) Physics.gravity = Vector3.zero;
+        }
+        else
+        {
+            updateState(GravityState.Active);
+            dragLerp = 0;
+        }
     }
 
-    public void StartActive (Transform newDirectionSource)
+    public float GetGravitizerDrag (RigidbodyGravitizer gravitizer)
     {
-        if (State == GravityState.Active) return;
-
-        setOrientation(newDirectionSource);
-        Physics.gravity = Direction * m_GravityAcceleration;
-
-        dragTweener?.Kill();
-        Drag = null;
-
-        updateState(GravityState.Active);
+        return Mathf.Lerp(gravitizer.BaseDrag, m_FluxDragMax, dragLerp);
     }
 
     void setOrientation (Transform source)
     {
         Direction = -source.up;
         Rotation = source.rotation;
+
+        Physics.gravity = Direction * m_GravityAcceleration;
     }
 
     void updateState (GravityState newState)
     {
-        State = newState;
+        if (State != newState) State = newState;
     }
 }

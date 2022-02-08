@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class RigidbodyGravitizer : MonoBehaviour
 {
+    public float BaseDrag => baseDrag;
+
     [SerializeField] Rigidbody m_Rigidbody;
     [SerializeField] Gravity m_Gravity;
 
@@ -24,6 +26,6 @@ public class RigidbodyGravitizer : MonoBehaviour
 
     void FixedUpdate ()
     {
-        m_Rigidbody.drag = m_Gravity.Drag ?? baseDrag;
+        m_Rigidbody.drag = m_Gravity.GetGravitizerDrag(this);
     }
 }

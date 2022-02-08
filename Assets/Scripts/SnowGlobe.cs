@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class SnowGlobe : MonoBehaviour
 {
@@ -8,22 +9,28 @@ public class SnowGlobe : MonoBehaviour
     [SerializeField] Transform m_InsidesParent;
     [SerializeField] Gravity m_Gravity;
 
-    bool controllingGravity;
+    XRBaseController currentController;
 
-    void FixedUpdate ()
+    void Update ()
     {
-        if (!controllingGravity) m_InsidesParent.rotation = m_Gravity.Rotation;
+        if (currentController != null)
+        {
+            m_Gravity.SetGravity(m_InsidesParent, currentController.currentControllerState.activateInteractionState.value);
+        }
+        
+        if (m_Gravity.State == GravityState.Active)
+        {
+            m_InsidesParent.rotation = m_Gravity.Rotation;
+        }
     }
 
-    public void OnActivated ()
+    public void OnSelectEntered (SelectEnterEventArgs args)
     {
-        controllingGravity = true;
-        m_Gravity.StartFlux();
+        currentController = args.interactorObject.transform.GetComponent<XRBaseController>();
     }
 
-    public void OnDeactivated ()
+    public void OnSelectExited (SelectExitEventArgs args)
     {
-        controllingGravity = false;
-        m_Gravity.StartActive(m_InsidesParent);
+        currentController = null;
     }
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 public class Gravity : ScriptableObject
 {
     [SerializeField] float m_GravityAcceleration, m_FluxDragMax;
-    [SerializeField] AnimationCurve m_FluxDragLerpByPressStrength, m_FluxDragLerpUpdateTimeByPressState;
+    [SerializeField] AnimationCurve m_FluxDragLerpByPressStrength, m_FluxDragLerpSpeedByPressStrength;
 
     [Range(0, 1)]
     [SerializeField] float m_FluxPressThreshold, m_FluxHardStopThreshold;
@@ -32,9 +32,9 @@ public class Gravity : ScriptableObject
             updateState(GravityState.Flux);
 
             float targetDragLerp = m_FluxDragLerpByPressStrength.Evaluate(strength),
-                dragLerpUpdateTime = m_FluxDragLerpUpdateTimeByPressState.Evaluate(strength);
+                dragLerpSpeed = m_FluxDragLerpSpeedByPressStrength.Evaluate(strength);
 
-            dragLerp = Mathf.SmoothDamp(dragLerp, targetDragLerp, ref dragLerpVelocity, dragLerpUpdateTime);
+            dragLerp = Mathf.SmoothDamp(dragLerp, targetDragLerp, ref dragLerpVelocity, 0, dragLerpSpeed);
             setOrientation(directionSource);
 
             if (strength >= m_FluxHardStopThreshold) Physics.gravity = Vector3.zero;
@@ -43,6 +43,7 @@ public class Gravity : ScriptableObject
         {
             updateState(GravityState.Active);
             dragLerp = 0;
+            dragLerpVelocity = 0;
         }
     }
 

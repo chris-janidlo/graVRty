@@ -30,6 +30,38 @@ Transform:
   m_Father: {fileID: 3439372449086241532}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -22, y: 0, z: 0}
+--- !u!1 &2097131732381197408
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2382951790939412531}
+  m_Layer: 8
+  m_Name: Visuals
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2382951790939412531
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097131732381197408}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 3439372449654252427}
+  - {fileID: 3439372449698541028}
+  m_Father: {fileID: 3439372449086241532}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3439372449086241535
 GameObject:
   m_ObjectHideFlags: 0
@@ -40,6 +72,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3439372449086241532}
   - component: {fileID: 3439372449086241533}
+  - component: {fileID: 7617548693416442774}
   - component: {fileID: 3439372449086241534}
   m_Layer: 8
   m_Name: Flashlight
@@ -60,8 +93,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2173806383365215606}
-  - {fileID: 3439372449654252427}
-  - {fileID: 3439372449698541028}
+  - {fileID: 4642397288626770403}
+  - {fileID: 2382951790939412531}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -112,10 +145,34 @@ MonoBehaviour:
       m_Calls: []
   m_Activated:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7617548693416442774}
+        m_TargetAssemblyTypeName: Flashlight, Assembly-CSharp
+        m_MethodName: OnActivated
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_Deactivated:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7617548693416442774}
+        m_TargetAssemblyTypeName: Flashlight, Assembly-CSharp
+        m_MethodName: OnDeactivated
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnFirstHoverEntered:
     m_PersistentCalls:
       m_Calls: []
@@ -181,6 +238,26 @@ MonoBehaviour:
   m_RetainTransformParent: 1
   m_AttachPointCompatibilityMode: 0
   AllowHover: 0
+--- !u!114 &7617548693416442774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3439372449086241535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 603b825f5f5e77b43a3307879a1fec62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_LightStartSize: 3
+  m_LightEndSize: 1
+  m_LightStartTime: 0.05
+  m_LightTransitionTime: 0.3
+  m_LightTransitionEase: 22
+  m_LightPrefab: {fileID: 8014823862794569791, guid: d22abf6b3d0897e428255259715e190d,
+    type: 3}
+  m_LightParent: {fileID: 4642397288626770403}
 --- !u!54 &3439372449086241534
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -224,10 +301,10 @@ Transform:
   m_GameObject: {fileID: 3439372449654252436}
   m_LocalRotation: {x: 0.70710677, y: -0, z: -0, w: 0.7071069}
   m_LocalPosition: {x: 0, y: 0.05490005, z: 0.019299984}
-  m_LocalScale: {x: 0.05, y: 0.02117086, z: 0.05000001}
+  m_LocalScale: {x: 0.05, y: 0.021170858, z: 0.050000012}
   m_Children: []
-  m_Father: {fileID: 3439372449086241532}
-  m_RootOrder: 1
+  m_Father: {fileID: 2382951790939412531}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!33 &3439372449654252425
 MeshFilter:
@@ -308,8 +385,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.05, y: 0.08, z: 0.05}
   m_Children: []
-  m_Father: {fileID: 3439372449086241532}
-  m_RootOrder: 2
+  m_Father: {fileID: 2382951790939412531}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3439372449698541017
 MeshFilter:
@@ -374,3 +451,33 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!1 &3663147830346599950
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4642397288626770403}
+  m_Layer: 8
+  m_Name: Light Parent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4642397288626770403
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3663147830346599950}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.05490005, z: 0.04047084}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3439372449086241532}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

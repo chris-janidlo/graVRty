@@ -2,18 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlashlightLight : MonoBehaviour
+namespace GraVRty.Interactables
 {
-    public float Size { get; private set; }
-
-    public void SetSize (float size)
+    public class FlashlightLight : MonoBehaviour
     {
-        Size = size;
-        transform.localScale = new Vector3(size, size, 1f/size);
-    }
+        public float Size { get; private set; }
 
-    public void Kill ()
-    {
-        Destroy(gameObject);
+        public void SetSize (float size)
+        {
+            Size = size;
+            transform.localScale = new Vector3(size, size, 1f / size);
+        }
+
+        public void Kill ()
+        {
+            Destroy(gameObject);
+        }
     }
 }

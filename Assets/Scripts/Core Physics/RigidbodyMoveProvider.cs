@@ -3,37 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class RigidbodyMoveProvider : LocomotionProvider
+namespace GraVRty.CorePhysics
 {
-    [SerializeField] Rigidbody m_TrackedRigidbody;
-    [SerializeField] CapsuleCollider m_DrivenCapsuleCollider;
-
-    [SerializeField] float m_MinHeight, m_MaxHeight;
-
-    void Start ()
+    public class RigidbodyMoveProvider : LocomotionProvider
     {
-        beginLocomotion += updateCapsuleCollider;
-        endLocomotion += updateCapsuleCollider;
-    }
+        [SerializeField] Rigidbody m_TrackedRigidbody;
+        [SerializeField] CapsuleCollider m_DrivenCapsuleCollider;
 
-    void FixedUpdate ()
-    {
-        if (CanBeginLocomotion() && BeginLocomotion())
+        [SerializeField] float m_MinHeight, m_MaxHeight;
+
+        void Start ()
         {
-            transform.position = m_TrackedRigidbody.position;
-            EndLocomotion();
+            beginLocomotion += updateCapsuleCollider;
+            endLocomotion += updateCapsuleCollider;
         }
-    }
 
-    void updateCapsuleCollider (LocomotionSystem _)
-    {
-        var originHeight = system.xrOrigin.CameraInOriginSpaceHeight;
-        var originPos = system.xrOrigin.CameraInOriginSpacePos;
+        void FixedUpdate ()
+        {
+            if (CanBeginLocomotion() && BeginLocomotion())
+            {
+                transform.position = m_TrackedRigidbody.position;
+                EndLocomotion();
+            }
+        }
 
-        var height = Mathf.Clamp(originHeight, m_MinHeight, m_MaxHeight);
-        var center = new Vector3(originPos.x, height / 2f, originPos.z);
+        void updateCapsuleCollider (LocomotionSystem _)
+        {
+            var originHeight = system.xrOrigin.CameraInOriginSpaceHeight;
+            var originPos = system.xrOrigin.CameraInOriginSpacePos;
 
-        m_DrivenCapsuleCollider.height = height;
-        m_DrivenCapsuleCollider.center = center;
+            var height = Mathf.Clamp(originHeight, m_MinHeight, m_MaxHeight);
+            var center = new Vector3(originPos.x, height / 2f, originPos.z);
+
+            m_DrivenCapsuleCollider.height = height;
+            m_DrivenCapsuleCollider.center = center;
+        }
     }
 }

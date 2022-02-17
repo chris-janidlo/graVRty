@@ -1,12 +1,15 @@
 using UnityEngine;
 using UnityAtoms.BaseAtoms;
 
-public class PositionSyncer : MonoBehaviour
+namespace GraVRty.CorePhysics
 {
-    public Vector3Variable PositionVariable;
-
-    void Update ()
+    public class PositionSyncer : MonoBehaviour
     {
-        PositionVariable.Value = transform.position;
+        public Vector3Variable PositionVariable;
+
+        void Update ()
+        {
+            PositionVariable.Value = transform.position;
+        }
     }
 }

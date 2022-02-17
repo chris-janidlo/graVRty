@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GravityInitializer : MonoBehaviour
+namespace GraVRty.CorePhysics
 {
-    [SerializeField] Gravity m_Gravity;
-
-    void Awake ()
+    public class GravityInitializer : MonoBehaviour
     {
-        m_Gravity.Initialize(transform);
+        [SerializeField] Gravity m_Gravity;
+
+        void Awake ()
+        {
+            m_Gravity.Initialize(transform);
+        }
     }
 }

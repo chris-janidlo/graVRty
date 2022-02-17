@@ -4,64 +4,67 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "GraVRty/Gravity Manager", fileName = "newGravityManager.asset")]
-public class Gravity : ScriptableObject
+namespace GraVRty.CorePhysics
 {
-    [SerializeField] float m_GravityAcceleration, m_FluxDragMax;
-    [SerializeField] AnimationCurve m_FluxDragLerpByPressStrength, m_FluxDragLerpSpeedByPressStrength;
-
-    [Range(0, 1)]
-    [SerializeField] float m_FluxPressThreshold, m_FluxHardStopThreshold;
-
-    public GravityState State { get; private set; }
-    public Vector3 Direction { get; private set; }
-    public Quaternion Rotation { get; private set; }
-
-    float dragLerp, dragLerpVelocity;
-
-    public void Initialize (Transform initialDirectionSource)
+    [CreateAssetMenu(menuName = "GraVRty/Gravity Manager", fileName = "newGravityManager.asset")]
+    public class Gravity : ScriptableObject
     {
-        State = GravityState.Active;
-        setOrientation(initialDirectionSource);
-    }
+        [SerializeField] float m_GravityAcceleration, m_FluxDragMax;
+        [SerializeField] AnimationCurve m_FluxDragLerpByPressStrength, m_FluxDragLerpSpeedByPressStrength;
 
-    public void SetGravity (Transform directionSource, float strength)
-    {
-        if (strength >= m_FluxPressThreshold)
+        [Range(0, 1)]
+        [SerializeField] float m_FluxPressThreshold, m_FluxHardStopThreshold;
+
+        public GravityState State { get; private set; }
+        public Vector3 Direction { get; private set; }
+        public Quaternion Rotation { get; private set; }
+
+        float dragLerp, dragLerpVelocity;
+
+        public void Initialize (Transform initialDirectionSource)
         {
-            updateState(GravityState.Flux);
-
-            float targetDragLerp = m_FluxDragLerpByPressStrength.Evaluate(strength),
-                dragLerpSpeed = m_FluxDragLerpSpeedByPressStrength.Evaluate(strength);
-
-            dragLerp = Mathf.SmoothDamp(dragLerp, targetDragLerp, ref dragLerpVelocity, 0, dragLerpSpeed);
-            setOrientation(directionSource);
-
-            if (strength >= m_FluxHardStopThreshold) Physics.gravity = Vector3.zero;
+            State = GravityState.Active;
+            setOrientation(initialDirectionSource);
         }
-        else
+
+        public void SetGravity (Transform directionSource, float strength)
         {
-            updateState(GravityState.Active);
-            dragLerp = 0;
-            dragLerpVelocity = 0;
+            if (strength >= m_FluxPressThreshold)
+            {
+                updateState(GravityState.Flux);
+
+                float targetDragLerp = m_FluxDragLerpByPressStrength.Evaluate(strength),
+                    dragLerpSpeed = m_FluxDragLerpSpeedByPressStrength.Evaluate(strength);
+
+                dragLerp = Mathf.SmoothDamp(dragLerp, targetDragLerp, ref dragLerpVelocity, 0, dragLerpSpeed);
+                setOrientation(directionSource);
+
+                if (strength >= m_FluxHardStopThreshold) Physics.gravity = Vector3.zero;
+            }
+            else
+            {
+                updateState(GravityState.Active);
+                dragLerp = 0;
+                dragLerpVelocity = 0;
+            }
         }
-    }
 
-    public float GetGravitizerDrag (RigidbodyGravitizer gravitizer)
-    {
-        return Mathf.Lerp(gravitizer.BaseDrag, m_FluxDragMax, dragLerp);
-    }
+        public float GetGravitizerDrag (RigidbodyGravitizer gravitizer)
+        {
+            return Mathf.Lerp(gravitizer.BaseDrag, m_FluxDragMax, dragLerp);
+        }
 
-    void setOrientation (Transform source)
-    {
-        Direction = -source.up;
-        Rotation = source.rotation;
+        void setOrientation (Transform source)
+        {
+            Direction = -source.up;
+            Rotation = source.rotation;
 
-        Physics.gravity = Direction * m_GravityAcceleration;
-    }
+            Physics.gravity = Direction * m_GravityAcceleration;
+        }
 
-    void updateState (GravityState newState)
-    {
-        if (State != newState) State = newState;
+        void updateState (GravityState newState)
+        {
+            if (State != newState) State = newState;
+        }
     }
 }

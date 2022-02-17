@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class XRGrabInteractableExtended : XRGrabInteractable
+namespace GraVRty.XRTools
 {
-    public bool AllowHover;
-
-    protected override void OnActivated (ActivateEventArgs args)
+    public class XRGrabInteractableExtended : XRGrabInteractable
     {
-        if (isSelected || AllowHover) base.OnActivated(args);
-    }
+        public bool AllowHover;
 
-    protected override void OnDeactivated (DeactivateEventArgs args)
-    {
-        if (isSelected || AllowHover) base.OnDeactivated(args);
+        protected override void OnActivated (ActivateEventArgs args)
+        {
+            if (isSelected || AllowHover) base.OnActivated(args);
+        }
+
+        protected override void OnDeactivated (DeactivateEventArgs args)
+        {
+            if (isSelected || AllowHover) base.OnDeactivated(args);
+        }
     }
 }

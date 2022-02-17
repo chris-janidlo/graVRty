@@ -2,35 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using GraVRty.CorePhysics;
 
-public class SnowGlobe : MonoBehaviour
+namespace GraVRty.Interactables
 {
-    [SerializeField] Rigidbody m_Rigidbody;
-    [SerializeField] Transform m_InsidesParent;
-    [SerializeField] Gravity m_Gravity;
-
-    XRBaseController currentController;
-
-    void Update ()
+    public class SnowGlobe : MonoBehaviour
     {
-        if (currentController != null)
+        [SerializeField] Rigidbody m_Rigidbody;
+        [SerializeField] Transform m_InsidesParent;
+        [SerializeField] Gravity m_Gravity;
+
+        XRBaseController currentController;
+
+        void Update ()
         {
-            m_Gravity.SetGravity(m_InsidesParent, currentController.currentControllerState.activateInteractionState.value);
+            if (currentController != null)
+            {
+                m_Gravity.SetGravity(m_InsidesParent, currentController.currentControllerState.activateInteractionState.value);
+            }
+
+            if (m_Gravity.State == GravityState.Active)
+            {
+                m_InsidesParent.rotation = m_Gravity.Rotation;
+            }
         }
-        
-        if (m_Gravity.State == GravityState.Active)
+
+        public void OnSelectEntered (SelectEnterEventArgs args)
         {
-            m_InsidesParent.rotation = m_Gravity.Rotation;
+            currentController = args.interactorObject.transform.GetComponent<XRBaseController>();
         }
-    }
 
-    public void OnSelectEntered (SelectEnterEventArgs args)
-    {
-        currentController = args.interactorObject.transform.GetComponent<XRBaseController>();
-    }
-
-    public void OnSelectExited (SelectExitEventArgs args)
-    {
-        currentController = null;
+        public void OnSelectExited (SelectExitEventArgs args)
+        {
+            currentController = null;
+        }
     }
 }

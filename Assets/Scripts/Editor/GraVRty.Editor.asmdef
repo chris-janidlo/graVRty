@@ -1,0 +1,21 @@
+{
+    "name": "GraVRty.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:14165214884ae4a619bfb290f28194a7",
+        "GUID:87264ae76e36244ae9adf5b5fbf7ca19",
+        "GUID:598750ec792e4472396f5fbc092caa65",
+        "GUID:0959b42901055e443b44d48bdc00f48e"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

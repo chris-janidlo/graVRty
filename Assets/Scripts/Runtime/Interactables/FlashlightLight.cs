@@ -12,13 +12,13 @@ namespace GraVRty.Interactables
         [Serializable]
         public struct SizeSpec
         {
-            public float Radius, Length;
+            public float Angle, Length;
 
             public static SizeSpec Lerp (SizeSpec a, SizeSpec b, float t)
             {
                 return new SizeSpec
                 {
-                    Radius = Mathf.Lerp(a.Radius, b.Radius, t),
+                    Angle = Mathf.Lerp(a.Angle, b.Angle, t),
                     Length = Mathf.Lerp(a.Length, b.Length, t)
                 };
             }
@@ -27,8 +27,15 @@ namespace GraVRty.Interactables
         [SerializeField] SizeSpec m_StartSize, m_EndSize;
         [SerializeField] AnimationCurve m_SizeTransitionCurve;
 
+        [SerializeField] Light m_Light;
+
         IEnumerator Start ()
         {
+            if (m_Light.type != LightType.Spot)
+            {
+                throw new Exception("Flashlight Light should be a spotlight");
+            }
+
             float currentTime = 0;
             float totalTime = m_SizeTransitionCurve.keys.Last().time;
 
@@ -50,7 +57,9 @@ namespace GraVRty.Interactables
         void setLerpedSize (float t)
         {
             SizeSpec size = SizeSpec.Lerp(m_StartSize, m_EndSize, t);
-            transform.localScale = new Vector3(size.Radius * 2, size.Radius * 2, size.Length);
+
+            m_Light.range = size.Length;
+            m_Light.spotAngle = size.Angle;
         }
     }
 }

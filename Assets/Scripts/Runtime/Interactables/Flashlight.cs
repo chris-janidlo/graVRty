@@ -20,6 +20,18 @@ namespace GraVRty.Interactables
 
         public void OnDeactivated (DeactivateEventArgs args)
         {
+            tryKillLight();
+        }
+
+        public void OnSelectExited (SelectExitEventArgs args)
+        {
+            tryKillLight();
+        }
+
+        void tryKillLight ()
+        {
+            if (currentLight == null) return;
+               
             currentLight.Kill();
             currentLight = null;
         }

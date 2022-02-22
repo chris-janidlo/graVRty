@@ -7,7 +7,7 @@ using DG.Tweening;
 
 namespace GraVRty.Interactables
 {
-    public class FlashlightLight : MonoBehaviour
+    public class FlashlightBeam : MonoBehaviour
     {
         [Serializable]
         public struct SizeSpec

@@ -110,9 +110,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 603b825f5f5e77b43a3307879a1fec62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_LightPrefab: {fileID: 8014823862794569791, guid: d22abf6b3d0897e428255259715e190d,
+  m_BeamPrefab: {fileID: 8014823862794569791, guid: d22abf6b3d0897e428255259715e190d,
     type: 3}
-  m_LightParent: {fileID: 4642397288626770403}
+  m_BeamParent: {fileID: 4642397288626770403}
 --- !u!114 &3439372449086241533
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -468,7 +468,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4642397288626770403}
   m_Layer: 8
-  m_Name: Light Parent
+  m_Name: Beam Parent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

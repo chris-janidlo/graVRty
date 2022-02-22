@@ -8,14 +8,14 @@ namespace GraVRty.Interactables
 {
     public class Flashlight : MonoBehaviour
     {
-        [SerializeField] FlashlightLight m_LightPrefab;
-        [SerializeField] Transform m_LightParent;
+        [SerializeField] FlashlightBeam m_BeamPrefab;
+        [SerializeField] Transform m_BeamParent;
 
-        FlashlightLight currentLight;
+        FlashlightBeam currentLight;
 
         public void OnActivated (ActivateEventArgs args)
         {
-            currentLight = Instantiate(m_LightPrefab, m_LightParent);
+            currentLight = Instantiate(m_BeamPrefab, m_BeamParent);
         }
 
         public void OnDeactivated (DeactivateEventArgs args)

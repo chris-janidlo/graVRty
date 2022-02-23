@@ -114,7 +114,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_RaycastsPerFrame: 50
+  m_RaycastsPerUnitAreaPerFrame: 3
   m_RaycastLayers:
     serializedVersion: 2
     m_Bits: 1399

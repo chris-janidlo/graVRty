@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 using crass;
 
 namespace GraVRty.Interactables
@@ -19,6 +20,9 @@ namespace GraVRty.Interactables
         {
             public float Angle, Length;
 
+            // radius / length = tan(angle)
+            public float BaseRadius => Length * Mathf.Tan(Angle * Mathf.Deg2Rad / 2);
+
             public static SizeSpec Lerp (SizeSpec a, SizeSpec b, float t)
             {
                 return new SizeSpec
@@ -32,13 +36,15 @@ namespace GraVRty.Interactables
         [SerializeField] SizeSpec m_StartSize, m_EndSize;
         [SerializeField] AnimationCurve m_SizeTransitionCurve;
 
-        [SerializeField] int m_RaycastsPerFrame;
+        [SerializeField] int m_RaycastsPerUnitAreaPerFrame;
         [SerializeField] LayerMask m_RaycastLayers;
         [SerializeField] bool m_DrawDebugRays;
         [SerializeField] EnumMap<RaycastHitState, Color> m_DebugRayColors;
 
         [SerializeField] Light m_Light;
         [SerializeField] Transform m_GeometryTransformer, m_Geometry;
+
+        SizeSpec currentSize;
 
         IEnumerator Start ()
         {
@@ -75,33 +81,30 @@ namespace GraVRty.Interactables
 
         void setLerpedSize (float t)
         {
-            SizeSpec size = SizeSpec.Lerp(m_StartSize, m_EndSize, t);
+            currentSize = SizeSpec.Lerp(m_StartSize, m_EndSize, t);
 
-            m_Light.range = size.Length;
-            m_Light.spotAngle = size.Angle;
+            m_Light.range = currentSize.Length;
+            m_Light.spotAngle = currentSize.Angle;
 
-            // radius / length = tan(angle)
-            float triggerRadius = size.Length * Mathf.Tan(size.Angle * Mathf.Deg2Rad / 2);
-            m_GeometryTransformer.localScale = new Vector3(triggerRadius, triggerRadius, size.Length);
+            m_GeometryTransformer.localScale = new Vector3(currentSize.BaseRadius, currentSize.BaseRadius, currentSize.Length);
         }
 
+        readonly HashSet<FlashlightBeamTarget> _targetsAlreadyReturnedThisFrame = new HashSet<FlashlightBeamTarget>();
         IEnumerable<FlashlightBeamTarget> getTargetsHitByBeam ()
         {
-            HashSet<FlashlightBeamTarget> targetsAlreadyReturnedThisFrame = new HashSet<FlashlightBeamTarget>();
+            _targetsAlreadyReturnedThisFrame.Clear();
 
             foreach (Vector3 point in getRaycastTargetPoints())
             {
                 Vector3 difference = point - transform.position;
 
-                bool hit = Physics.Raycast(transform.position, difference.normalized, out RaycastHit hitInfo, difference.magnitude, m_RaycastLayers);
-                if (!hit)
+                if (!Physics.Raycast(transform.position, difference.normalized, out RaycastHit hitInfo, difference.magnitude, m_RaycastLayers))
                 {
                     drawRay(transform.position, difference, RaycastHitState.Missed);
                     continue;
                 }
 
-                FlashlightBeamTarget target = hitInfo.collider.GetComponent<FlashlightBeamTarget>();
-                if (target == null)
+                if (!hitInfo.collider.TryGetComponent(out FlashlightBeamTarget target))
                 {
                     drawRay(transform.position, difference, RaycastHitState.HitNonTarget);
                     continue;
@@ -109,9 +112,9 @@ namespace GraVRty.Interactables
 
                 drawRay(transform.position, difference, RaycastHitState.HitTarget);
 
-                if (!targetsAlreadyReturnedThisFrame.Contains(target))
+                if (!_targetsAlreadyReturnedThisFrame.Contains(target))
                 {
-                    targetsAlreadyReturnedThisFrame.Add(target);
+                    _targetsAlreadyReturnedThisFrame.Add(target);
                     yield return target;
                 }
             }
@@ -119,9 +122,22 @@ namespace GraVRty.Interactables
 
         IEnumerable<Vector3> getRaycastTargetPoints ()
         {
-            for (int i = 0; i < m_RaycastsPerFrame; i++)
+            // uses algorithm from https://stackoverflow.com/a/28572551/5931898, which is a modified sunflower seed arrangement with additional bias toward the edge of the circle
+            const float phiSquared = 2.61803398875f; // golden ratio, squared
+            const float alpha = 2; // amount of edge bias. author recommends 2
+
+            int numRaycasts = Mathf.RoundToInt(Mathf.PI * currentSize.BaseRadius * currentSize.BaseRadius * m_RaycastsPerUnitAreaPerFrame);
+            int boundaryPointCount = Mathf.RoundToInt(alpha * Mathf.Sqrt(numRaycasts));
+
+            for (int i = 0; i < numRaycasts; i++)
             {
-                yield return m_Geometry.TransformPoint(UnityEngine.Random.insideUnitCircle);
+                float polarRadius = i > numRaycasts - boundaryPointCount
+                    ? 1
+                    : Mathf.Sqrt(i - .5f) / Mathf.Sqrt(numRaycasts - (boundaryPointCount + 1) / 2f); // normal sunflower seed arrangement would just use Mathf.Sqrt(i - .5f), but we apply an additional scaling factor to account for the boundary
+                float polarAngle = 2 * Mathf.PI * i / phiSquared;
+
+                Vector2 cartesianPoint = new Vector2(polarRadius * Mathf.Cos(polarAngle), polarRadius * Mathf.Sin(polarAngle));
+                yield return m_Geometry.TransformPoint(cartesianPoint);
             }
         }
 

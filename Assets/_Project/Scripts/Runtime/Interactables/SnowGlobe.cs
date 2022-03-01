@@ -18,7 +18,7 @@ namespace GraVRty.Interactables
         {
             if (currentController != null)
             {
-                m_Gravity.SetGravity(m_InsidesParent, currentController.currentControllerState.activateInteractionState.value);
+                m_Gravity.SetGravity(m_InsidesParent, currentController.activateInteractionState.value);
             }
 
             if (m_Gravity.State == GravityState.Active)

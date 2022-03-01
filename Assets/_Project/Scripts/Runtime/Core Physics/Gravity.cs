@@ -36,7 +36,11 @@ namespace GraVRty.CorePhysics
                 float targetDragLerp = m_FluxDragLerpByPressStrength.Evaluate(strength),
                     dragLerpSpeed = m_FluxDragLerpSpeedByPressStrength.Evaluate(strength);
 
-                dragLerp = Mathf.SmoothDamp(dragLerp, targetDragLerp, ref dragLerpVelocity, 0, dragLerpSpeed);
+                if (dragLerp < targetDragLerp)
+                    dragLerp = Mathf.Min(targetDragLerp, dragLerp + dragLerpSpeed * Time.deltaTime);
+                else
+                    dragLerp = Mathf.Max(targetDragLerp, dragLerp - dragLerpSpeed * Time.deltaTime);
+
                 setOrientation(directionSource);
 
                 if (strength >= m_FluxHardStopThreshold) Physics.gravity = Vector3.zero;
@@ -47,6 +51,7 @@ namespace GraVRty.CorePhysics
                 dragLerp = 0;
                 dragLerpVelocity = 0;
             }
+
         }
 
         public float GetGravitizerDrag (RigidbodyGravitizer gravitizer)

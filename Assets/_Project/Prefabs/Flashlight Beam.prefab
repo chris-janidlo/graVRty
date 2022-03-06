@@ -75,46 +75,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6a9cd7d38f5237448a24a0285189536, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_StartSize:
-    Angle: 100
-    Length: 3
-  m_EndSize:
+  m_Size:
     Angle: 15
     Length: 20
-  m_SizeTransitionCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.05
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.25
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.09857724
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  m_RaycastsPerUnitAreaPerFrame: 3
+  m_Raycasts: 50
   m_RaycastLayers:
     serializedVersion: 2
     m_Bits: 1399

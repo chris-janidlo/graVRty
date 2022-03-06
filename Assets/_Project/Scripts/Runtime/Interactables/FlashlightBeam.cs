@@ -10,6 +10,13 @@ namespace GraVRty.Interactables
 {
     public class FlashlightBeam : MonoBehaviour
     {
+        static Dictionary<SizeSpec, IEnumerable<Vector3>> circlePointCache;
+
+        static FlashlightBeam ()
+        {
+            circlePointCache = new Dictionary<SizeSpec, IEnumerable<Vector3>>();
+        }
+
         public enum RaycastHitState
         {
             Missed, HitNonTarget, HitTarget
@@ -19,24 +26,11 @@ namespace GraVRty.Interactables
         public struct SizeSpec
         {
             public float Angle, Length;
-
-            // radius / length = tan(angle)
-            public float BaseRadius => Length * Mathf.Tan(Angle * Mathf.Deg2Rad / 2);
-
-            public static SizeSpec Lerp (SizeSpec a, SizeSpec b, float t)
-            {
-                return new SizeSpec
-                {
-                    Angle = Mathf.Lerp(a.Angle, b.Angle, t),
-                    Length = Mathf.Lerp(a.Length, b.Length, t)
-                };
-            }
         }
 
-        [SerializeField] SizeSpec m_StartSize, m_EndSize;
-        [SerializeField] AnimationCurve m_SizeTransitionCurve;
+        [SerializeField] SizeSpec m_Size;
+        [SerializeField] int m_Raycasts;
 
-        [SerializeField] int m_RaycastsPerUnitAreaPerFrame;
         [SerializeField] LayerMask m_RaycastLayers;
         [SerializeField] bool m_DrawDebugRays;
         [SerializeField] EnumMap<RaycastHitState, Color> m_DebugRayColors;
@@ -44,26 +38,15 @@ namespace GraVRty.Interactables
         [SerializeField] Light m_Light;
         [SerializeField] Transform m_GeometryTransformer, m_Geometry;
 
-        SizeSpec currentSize;
-
-        IEnumerator Start ()
+        void Start ()
         {
             if (m_Light.type != LightType.Spot)
             {
+                Kill();
                 throw new Exception("Flashlight Light should be a spotlight");
             }
 
-            float currentTime = 0;
-            float totalTime = m_SizeTransitionCurve.keys.Last().time;
-
-            while (currentTime < totalTime)
-            {
-                setLerpedSize(m_SizeTransitionCurve.Evaluate(currentTime));
-                currentTime += Time.deltaTime;
-                yield return null;
-            }
-
-            setLerpedSize(m_SizeTransitionCurve.keys.Last().value);
+            applySize();
         }
 
         void FixedUpdate ()
@@ -79,14 +62,14 @@ namespace GraVRty.Interactables
             Destroy(gameObject);
         }
 
-        void setLerpedSize (float t)
+        void applySize ()
         {
-            currentSize = SizeSpec.Lerp(m_StartSize, m_EndSize, t);
+            m_Light.range = m_Size.Length;
+            m_Light.spotAngle = m_Size.Angle;
 
-            m_Light.range = currentSize.Length;
-            m_Light.spotAngle = currentSize.Angle;
-
-            m_GeometryTransformer.localScale = new Vector3(currentSize.BaseRadius, currentSize.BaseRadius, currentSize.Length);
+            // radius / length = tan(angle)
+            float baseRadius = m_Size.Length * Mathf.Tan(m_Size.Angle * Mathf.Deg2Rad / 2);
+            m_GeometryTransformer.localScale = new Vector3(baseRadius, baseRadius, m_Size.Length);
         }
 
         readonly HashSet<FlashlightBeamTarget> _targetsAlreadyReturnedThisFrame = new HashSet<FlashlightBeamTarget>();
@@ -94,9 +77,10 @@ namespace GraVRty.Interactables
         {
             _targetsAlreadyReturnedThisFrame.Clear();
 
-            foreach (Vector3 point in getRaycastTargetPoints())
+            foreach (Vector3 cartesianPoint in getCirclePoints())
             {
-                Vector3 difference = point - transform.position;
+                Vector3 worldPoint = m_Geometry.TransformPoint(cartesianPoint);
+                Vector3 difference = worldPoint - transform.position;
 
                 if (!Physics.Raycast(transform.position, difference.normalized, out RaycastHit hitInfo, difference.magnitude, m_RaycastLayers))
                 {
@@ -120,24 +104,37 @@ namespace GraVRty.Interactables
             }
         }
 
-        IEnumerable<Vector3> getRaycastTargetPoints ()
+        IEnumerable<Vector3> getCirclePoints ()
         {
+            if (circlePointCache.TryGetValue(m_Size, out IEnumerable<Vector3> cache))
+            {
+                foreach (var point in cache)
+                {
+                    yield return point;
+                }
+
+                yield break;
+            }
+
+            List<Vector3> newPointCache = new List<Vector3>();
+            circlePointCache[m_Size] = newPointCache;
+
             // uses algorithm from https://stackoverflow.com/a/28572551/5931898, which is a modified sunflower seed arrangement with additional bias toward the edge of the circle
             const float phiSquared = 2.61803398875f; // golden ratio, squared
             const float alpha = 2; // amount of edge bias. author recommends 2
 
-            int numRaycasts = Mathf.RoundToInt(Mathf.PI * currentSize.BaseRadius * currentSize.BaseRadius * m_RaycastsPerUnitAreaPerFrame);
-            int boundaryPointCount = Mathf.RoundToInt(alpha * Mathf.Sqrt(numRaycasts));
+            int boundaryPointCount = Mathf.RoundToInt(alpha * Mathf.Sqrt(m_Raycasts));
 
-            for (int i = 0; i < numRaycasts; i++)
+            for (int i = 0; i < m_Raycasts; i++)
             {
-                float polarRadius = i > numRaycasts - boundaryPointCount
+                float polarRadius = i > m_Raycasts - boundaryPointCount
                     ? 1
-                    : Mathf.Sqrt(i - .5f) / Mathf.Sqrt(numRaycasts - (boundaryPointCount + 1) / 2f); // normal sunflower seed arrangement would just use Mathf.Sqrt(i - .5f), but we apply an additional scaling factor to account for the boundary
+                    : Mathf.Sqrt(i - .5f) / Mathf.Sqrt(m_Raycasts - (boundaryPointCount + 1) / 2f); // normal sunflower seed arrangement would just use Mathf.Sqrt(i - .5f), but we apply an additional scaling factor to account for the boundary
                 float polarAngle = 2 * Mathf.PI * i / phiSquared;
 
                 Vector2 cartesianPoint = new Vector2(polarRadius * Mathf.Cos(polarAngle), polarRadius * Mathf.Sin(polarAngle));
-                yield return m_Geometry.TransformPoint(cartesianPoint);
+                newPointCache.Add(cartesianPoint);
+                yield return cartesianPoint;
             }
         }
 

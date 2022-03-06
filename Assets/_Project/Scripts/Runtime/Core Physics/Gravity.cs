@@ -47,11 +47,13 @@ namespace GraVRty.CorePhysics
             }
             else
             {
+                // ensure that gravity is properly set when the player lets go of their action button. especially useful for preventing situations where letting go of the action button too fast keeps gravity stuck at 0
+                if (State == GravityState.Flux) setOrientation(directionSource);
+
                 updateState(GravityState.Active);
                 dragLerp = 0;
                 dragLerpVelocity = 0;
             }
-
         }
 
         public float GetGravitizerDrag (RigidbodyGravitizer gravitizer)

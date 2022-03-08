@@ -10,13 +10,6 @@ namespace GraVRty.Interactables
 {
     public class FlashlightBeam : MonoBehaviour
     {
-        static Dictionary<SizeSpec, IEnumerable<Vector3>> circlePointCache;
-
-        static FlashlightBeam ()
-        {
-            circlePointCache = new Dictionary<SizeSpec, IEnumerable<Vector3>>();
-        }
-
         public enum RaycastHitState
         {
             Missed, HitNonTarget, HitTarget
@@ -38,15 +31,17 @@ namespace GraVRty.Interactables
         [SerializeField] Light m_Light;
         [SerializeField] Transform m_GeometryTransformer, m_Geometry;
 
+        List<Vector3> circlePoints;
+
         void Start ()
         {
             if (m_Light.type != LightType.Spot)
             {
-                Kill();
                 throw new Exception("Flashlight Light should be a spotlight");
             }
 
             applySize();
+            calculateCartesianPoints();
         }
 
         void FixedUpdate ()
@@ -55,11 +50,6 @@ namespace GraVRty.Interactables
             {
                 target.TrackBeamHit();
             }
-        }
-
-        public void Kill ()
-        {
-            Destroy(gameObject);
         }
 
         void applySize ()
@@ -77,9 +67,9 @@ namespace GraVRty.Interactables
         {
             _targetsAlreadyReturnedThisFrame.Clear();
 
-            foreach (Vector3 cartesianPoint in getCirclePoints())
+            foreach (Vector3 circlePoint in circlePoints)
             {
-                Vector3 worldPoint = m_Geometry.TransformPoint(cartesianPoint);
+                Vector3 worldPoint = m_Geometry.TransformPoint(circlePoint);
                 Vector3 difference = worldPoint - transform.position;
 
                 if (!Physics.Raycast(transform.position, difference.normalized, out RaycastHit hitInfo, difference.magnitude, m_RaycastLayers))
@@ -104,20 +94,9 @@ namespace GraVRty.Interactables
             }
         }
 
-        IEnumerable<Vector3> getCirclePoints ()
+        void calculateCartesianPoints ()
         {
-            if (circlePointCache.TryGetValue(m_Size, out IEnumerable<Vector3> cache))
-            {
-                foreach (var point in cache)
-                {
-                    yield return point;
-                }
-
-                yield break;
-            }
-
-            List<Vector3> newPointCache = new List<Vector3>();
-            circlePointCache[m_Size] = newPointCache;
+            circlePoints = new List<Vector3>();
 
             // uses algorithm from https://stackoverflow.com/a/28572551/5931898, which is a modified sunflower seed arrangement with additional bias toward the edge of the circle
             const float phiSquared = 2.61803398875f; // golden ratio, squared
@@ -133,8 +112,7 @@ namespace GraVRty.Interactables
                 float polarAngle = 2 * Mathf.PI * i / phiSquared;
 
                 Vector2 cartesianPoint = new Vector2(polarRadius * Mathf.Cos(polarAngle), polarRadius * Mathf.Sin(polarAngle));
-                newPointCache.Add(cartesianPoint);
-                yield return cartesianPoint;
+                circlePoints.Add(cartesianPoint);
             }
         }
 

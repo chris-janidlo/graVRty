@@ -92,6 +92,7 @@ MonoBehaviour:
   m_Light: {fileID: 81198710125166477}
   m_GeometryTransformer: {fileID: 4281625047400629561}
   m_Geometry: {fileID: 8009364100830257091}
+  m_Loadable: {fileID: 11400000, guid: ea7a2259d3900ac4b82d4f1079f7eabc, type: 2}
 --- !u!1 &6064968570457951390
 GameObject:
   m_ObjectHideFlags: 0

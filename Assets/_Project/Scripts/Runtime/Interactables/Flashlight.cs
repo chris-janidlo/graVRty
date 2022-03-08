@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using DG.Tweening;
+using GraVRty.Loading.Loadables;
 
 namespace GraVRty.Interactables
 {
     public class Flashlight : MonoBehaviour
     {
         [SerializeField] FlashlightBeam m_BeamPrefab;
+        [SerializeField] FlashlightBeamCache m_FlashlightBeamCache;
         [SerializeField] Transform m_BeamParent;
 
         FlashlightBeam currentLight;
 
         public void OnActivated (ActivateEventArgs args)
         {
-            currentLight = Instantiate(m_BeamPrefab, m_BeamParent);
+            currentLight = m_FlashlightBeamCache.InstantiateFromCache(m_BeamPrefab, m_BeamParent);
         }
 
         public void OnDeactivated (DeactivateEventArgs args)
@@ -31,8 +33,8 @@ namespace GraVRty.Interactables
         void tryKillLight ()
         {
             if (currentLight == null) return;
-               
-            currentLight.Kill();
+
+            m_FlashlightBeamCache.ReleaseToCache(m_BeamPrefab);
             currentLight = null;
         }
     }

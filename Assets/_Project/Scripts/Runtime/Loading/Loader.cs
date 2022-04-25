@@ -17,10 +17,14 @@ namespace GraVRty.Loading
         IEnumerator Start ()
         {
             // from https://stackoverflow.com/a/60239710/5931898
+            List<Coroutine> coroutines = new List<Coroutine>();
             foreach (var loadable in m_Loadables)
             {
-                Coroutine routine = StartCoroutine(loadable.LoadRoutine());
-                yield return routine;
+                coroutines.Add(StartCoroutine(loadable.LoadRoutine()));
+            }
+            foreach (var coroutine in coroutines)
+            {
+                yield return coroutine;
             }
 
             m_FadeHelmet.material.DOFade(0, m_FadeInTime)

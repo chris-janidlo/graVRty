@@ -8,16 +8,16 @@ namespace GraVRty.Combat
 {
     public class FlashlightBeamTarget : MonoBehaviour
     {
-        [SerializeField] UnityEvent m_HitByBeam;
+        [SerializeField] UnityEvent<BeamHitInfo> m_HitByBeam;
 
-        public UnityEvent HitByBeam => m_HitByBeam;
+        public UnityEvent<BeamHitInfo> HitByBeam => m_HitByBeam;
 
-        public void TrackBeamHit ()
+        public void TrackBeamHit (BeamHitInfo beamHitInfo)
         {
-            HitByBeam.Invoke();
-            onBeamHit();
+            HitByBeam.Invoke(beamHitInfo);
+            onBeamHit(beamHitInfo);
         }
 
-        protected virtual void onBeamHit () { }
+        protected virtual void onBeamHit (BeamHitInfo beamHitInfo) { }
     }
 }

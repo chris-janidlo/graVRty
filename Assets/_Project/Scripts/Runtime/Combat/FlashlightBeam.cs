@@ -32,6 +32,7 @@ namespace GraVRty.Combat
         [SerializeField] Transform m_GeometryTransformer, m_Geometry;
 
         List<Vector3> circlePoints;
+        Dictionary<FlashlightBeamTarget, BeamHitInfo> targetTracking;
 
         void Start ()
         {
@@ -40,15 +41,46 @@ namespace GraVRty.Combat
                 throw new Exception("Flashlight Light should be a spotlight");
             }
 
+            targetTracking = new Dictionary<FlashlightBeamTarget, BeamHitInfo>();
+
             applySize();
             calculateCartesianPoints();
         }
 
         void FixedUpdate ()
         {
-            foreach (FlashlightBeamTarget target in getTargetsHitByBeam())
+            targetTracking.Clear();
+
+            foreach (Vector3 circlePoint in circlePoints)
             {
-                target.TrackBeamHit();
+                Vector3 worldPoint = m_Geometry.TransformPoint(circlePoint);
+                Vector3 difference = worldPoint - transform.position;
+
+                if (!Physics.Raycast(transform.position, difference.normalized, out RaycastHit rayHitInfo, difference.magnitude, m_RaycastLayers))
+                {
+                    drawRay(transform.position, difference, RaycastHitState.Missed);
+                    continue;
+                }
+
+                if (!rayHitInfo.collider.TryGetComponent(out FlashlightBeamTarget target))
+                {
+                    drawRay(transform.position, difference, RaycastHitState.HitNonTarget);
+                    continue;
+                }
+
+                drawRay(transform.position, difference, RaycastHitState.HitTarget);
+
+                if (!targetTracking.TryGetValue(target, out BeamHitInfo beamHitInfo))
+                {
+                    beamHitInfo = new BeamHitInfo();
+                }
+
+                targetTracking[target] = beamHitInfo.PlusRayHit(rayHitInfo.point);
+            }
+
+            foreach (var pair in targetTracking)
+            {
+                pair.Key.TrackBeamHit(pair.Value);
             }
         }
 
@@ -60,38 +92,6 @@ namespace GraVRty.Combat
             // radius / length = tan(angle)
             float baseRadius = m_Size.Length * Mathf.Tan(m_Size.Angle * Mathf.Deg2Rad / 2);
             m_GeometryTransformer.localScale = new Vector3(baseRadius, baseRadius, m_Size.Length);
-        }
-
-        readonly HashSet<FlashlightBeamTarget> _targetsAlreadyReturnedThisFrame = new HashSet<FlashlightBeamTarget>();
-        IEnumerable<FlashlightBeamTarget> getTargetsHitByBeam ()
-        {
-            _targetsAlreadyReturnedThisFrame.Clear();
-
-            foreach (Vector3 circlePoint in circlePoints)
-            {
-                Vector3 worldPoint = m_Geometry.TransformPoint(circlePoint);
-                Vector3 difference = worldPoint - transform.position;
-
-                if (!Physics.Raycast(transform.position, difference.normalized, out RaycastHit hitInfo, difference.magnitude, m_RaycastLayers))
-                {
-                    drawRay(transform.position, difference, RaycastHitState.Missed);
-                    continue;
-                }
-
-                if (!hitInfo.collider.TryGetComponent(out FlashlightBeamTarget target))
-                {
-                    drawRay(transform.position, difference, RaycastHitState.HitNonTarget);
-                    continue;
-                }
-
-                drawRay(transform.position, difference, RaycastHitState.HitTarget);
-
-                if (!_targetsAlreadyReturnedThisFrame.Contains(target))
-                {
-                    _targetsAlreadyReturnedThisFrame.Add(target);
-                    yield return target;
-                }
-            }
         }
 
         void calculateCartesianPoints ()

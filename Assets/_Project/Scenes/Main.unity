@@ -10920,11 +10920,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1899447672}
+  - component: {fileID: 1899447674}
   - component: {fileID: 1899447671}
   - component: {fileID: 1899447670}
   - component: {fileID: 1899447669}
   - component: {fileID: 1899447673}
-  - component: {fileID: 1899447674}
   m_Layer: 10
   m_Name: Fake bad guy
   m_TagString: Untagged
@@ -11033,7 +11033,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1899447668}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5234e6e598529e4b827d718fe3cd1cd, type: 3}
+  m_Script: {fileID: 11500000, guid: e129421a4c7146a428cfd0e654926407, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_HitByBeam:

@@ -34,6 +34,7 @@ namespace GraVRty.Interactables
 
         public void OnSelectExited (SelectExitEventArgs args)
         {
+            m_Gravity.SetGravity(m_InsidesParent, 0);
             currentController = null;
         }
     }

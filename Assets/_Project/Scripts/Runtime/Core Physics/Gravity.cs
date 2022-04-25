@@ -19,7 +19,7 @@ namespace GraVRty.CorePhysics
         public Vector3 Direction { get; private set; }
         public Quaternion Rotation { get; private set; }
 
-        float dragLerp, dragLerpVelocity;
+        float dragLerp;
 
         public void Initialize (Transform initialDirectionSource)
         {
@@ -52,7 +52,6 @@ namespace GraVRty.CorePhysics
 
                 updateState(GravityState.Active);
                 dragLerp = 0;
-                dragLerpVelocity = 0;
             }
         }
 

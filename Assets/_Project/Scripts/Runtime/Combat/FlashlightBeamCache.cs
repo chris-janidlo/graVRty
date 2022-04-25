@@ -3,9 +3,9 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GraVRty.Interactables;
+using GraVRty.Loading;
 
-namespace GraVRty.Loading.Loadables
+namespace GraVRty.Combat
 {
     [CreateAssetMenu(menuName = "GraVRty/Loadables/Flashlight Beam Pool", fileName = "newFlashlightBeamLoadablePool.asset")]
     public class FlashlightBeamCache : LoadableEagerCache<FlashlightBeam> { }

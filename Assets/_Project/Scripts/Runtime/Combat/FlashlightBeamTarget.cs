@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace GraVRty.Interactables
+namespace GraVRty.Combat
 {
     public class FlashlightBeamTarget : MonoBehaviour
     {

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using crass;
 
-namespace GraVRty.Interactables
+namespace GraVRty.Combat
 {
     public class FlashlightBeam : MonoBehaviour
     {

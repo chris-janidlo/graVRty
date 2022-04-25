@@ -7,9 +7,9 @@ using UnityAtoms.BaseAtoms;
 using DG.Tweening;
 using TMPro;
 using crass;
-using GraVRty.XRTools;
+using GraVRty.Interactables;
 
-namespace GraVRty.DebugTools
+namespace GraVRty.DevelopmentTools
 {
     public class XRConsole : MonoBehaviour
     {

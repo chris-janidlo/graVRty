@@ -12,10 +12,12 @@ namespace GraVRty.Combat
 
         public UnityEvent HitByBeam => m_HitByBeam;
 
-        public virtual void TrackBeamHit ()
+        public void TrackBeamHit ()
         {
             HitByBeam.Invoke();
-            Debug.Log(gameObject.name + " was hit");
+            onBeamHit();
         }
+
+        protected virtual void onBeamHit () { }
     }
 }

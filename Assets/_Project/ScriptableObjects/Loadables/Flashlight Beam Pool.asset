@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 503291a8c1cc5ef4d953409c423f09d7, type: 3}
-  m_Name: Flashlight Beam Cache
+  m_Script: {fileID: 11500000, guid: 57fb328113560d448b419ca9827dad83, type: 3}
+  m_Name: Flashlight Beam Pool
   m_EditorClassIdentifier: 
-  m_PrefabssToInstantiate:
-  - {fileID: 8014823862794569791, guid: d22abf6b3d0897e428255259715e190d, type: 3}
+  m_Prefab: {fileID: 5148887767313559809, guid: d22abf6b3d0897e428255259715e190d,
+    type: 3}
   m_InstantiationLocation: {x: 1000, y: 1000, z: 1000}
+  m_EagerLoadCount: 1
+  m_MaxInstanceCount: 1

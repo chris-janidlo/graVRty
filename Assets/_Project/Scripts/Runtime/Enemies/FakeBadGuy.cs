@@ -9,7 +9,7 @@ namespace GraVRty.Enemies
     {
         protected override void onBeamHit (BeamHitInfo beamHitInfo)
         {
-            Debug.Log($"{name} was hit by {beamHitInfo.RayHitCount} rays centered around {beamHitInfo.Centroid}");
+            Debug.Log($"{name} was hit by {beamHitInfo.RayHitCount} rays ({beamHitInfo.PercentageHit:P} of all rays cast) centered around {beamHitInfo.Centroid}");
         }
     }
 }

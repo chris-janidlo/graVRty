@@ -98,7 +98,7 @@ namespace GraVRty.Combat
 
                 if (!targetTracking.TryGetValue(target, out BeamHitInfo beamHitInfo))
                 {
-                    beamHitInfo = new BeamHitInfo();
+                    beamHitInfo = new BeamHitInfo(m_Raycasts);
                 }
 
                 targetTracking[target] = beamHitInfo.PlusRayHit(rayHitInfo.point);

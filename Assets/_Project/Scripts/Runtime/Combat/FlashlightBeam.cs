@@ -143,7 +143,7 @@ namespace GraVRty.Combat
 
         void calculateCartesianPoints ()
         {
-            circlePoints = new List<Vector3>();
+            circlePoints = new List<Vector3>(m_Raycasts);
 
             // uses algorithm from https://stackoverflow.com/a/28572551/5931898, which is a modified sunflower seed arrangement with additional bias toward the edge of the circle
             const float phiSquared = 2.61803398875f; // golden ratio, squared

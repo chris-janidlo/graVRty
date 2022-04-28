@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Profiling;
 using crass;
 
@@ -21,13 +22,13 @@ namespace GraVRty.Combat
         }
 
         [Serializable]
-        public struct SizeSpec
+        public struct Dimensions
         {
             public float Angle, Length;
+            public Direction Direction;
         }
 
-        [SerializeField] SizeSpec m_Size;
-        [SerializeField] Direction m_RayDirection;
+        [SerializeField] Dimensions m_InitialDimensions;
         [SerializeField] int m_Raycasts;
 
         [SerializeField] LayerMask m_RaycastLayers;
@@ -35,7 +36,9 @@ namespace GraVRty.Combat
         [SerializeField] EnumMap<RaycastHitState, Color> m_DebugRayColors;
 
         [SerializeField] Light m_Light;
-        [SerializeField] Transform m_ConeScaler, m_ConePointTransform, m_ConeBaseTransform;
+        [SerializeField] Transform m_Offset, m_ConeScaler, m_ConePointTransform, m_ConeBaseTransform;
+
+        public Dimensions CurrentDimensions { get; private set; }
 
         List<Vector3> circlePoints;
         Dictionary<FlashlightBeamTarget, BeamHitInfo> targetTracking;
@@ -49,7 +52,7 @@ namespace GraVRty.Combat
 
             targetTracking = new Dictionary<FlashlightBeamTarget, BeamHitInfo>();
 
-            applySize();
+            SetDimensions(m_InitialDimensions);
             calculateCartesianPoints();
         }
 
@@ -62,7 +65,7 @@ namespace GraVRty.Combat
                 Vector3 circlePointInWorld = m_ConeBaseTransform.TransformPoint(circlePoint);
 
                 Vector3 startPosition, endPosition;
-                switch (m_RayDirection)
+                switch (CurrentDimensions.Direction)
                 {
                     case Direction.PointToBase:
                         startPosition = m_ConePointTransform.position;
@@ -75,7 +78,7 @@ namespace GraVRty.Combat
                         break;
 
                     default:
-                        throw new InvalidOperationException($"{nameof(m_RayDirection)} has unexpected {typeof(Direction).Name} value {m_RayDirection}");
+                        throw new InvalidOperationException($"{nameof(CurrentDimensions.Direction)} has unexpected {typeof(Direction).Name} value {CurrentDimensions.Direction}");
                 }
 
                 Vector3 rayCastDifference = endPosition - startPosition;
@@ -110,14 +113,32 @@ namespace GraVRty.Combat
             }
         }
 
-        void applySize ()
+        public void SetDimensions (Dimensions dimensions)
         {
-            m_Light.range = m_Size.Length;
-            m_Light.spotAngle = m_Size.Angle;
+            CurrentDimensions = dimensions;
+
+            switch (CurrentDimensions.Direction)
+            {
+                case Direction.BaseToPoint:
+                    m_Offset.localRotation = Quaternion.Euler(0, 180, 0);
+                    m_Offset.localPosition = Vector3.forward * CurrentDimensions.Length;
+                    break;
+
+                case Direction.PointToBase:
+                    m_Offset.localRotation = Quaternion.identity;
+                    m_Offset.localPosition = Vector3.zero;
+                    break;
+
+                default:
+                    throw new InvalidOperationException($"{nameof(CurrentDimensions.Direction)} has unexpected {typeof(Direction).Name} value {CurrentDimensions.Direction}");
+            }
+
+            m_Light.range = CurrentDimensions.Length;
+            m_Light.spotAngle = CurrentDimensions.Angle;
 
             // radius / length = tan(angle)
-            float baseRadius = m_Size.Length * Mathf.Tan(m_Size.Angle * Mathf.Deg2Rad / 2);
-            m_ConeScaler.localScale = new Vector3(baseRadius, baseRadius, m_Size.Length);
+            float baseRadius = CurrentDimensions.Length * Mathf.Tan(CurrentDimensions.Angle * Mathf.Deg2Rad / 2);
+            m_ConeScaler.localScale = new Vector3(baseRadius, baseRadius, CurrentDimensions.Length);
         }
 
         void calculateCartesianPoints ()

@@ -151,7 +151,7 @@ namespace GraVRty.Combat
 
             int boundaryPointCount = Mathf.RoundToInt(alpha * Mathf.Sqrt(m_Raycasts));
 
-            for (int i = 0; i < m_Raycasts; i++)
+            for (int i = 1; i <= m_Raycasts; i++)
             {
                 float polarRadius = i > m_Raycasts - boundaryPointCount
                     ? 1

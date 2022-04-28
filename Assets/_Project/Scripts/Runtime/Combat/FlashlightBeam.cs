@@ -52,7 +52,7 @@ namespace GraVRty.Combat
 
             targetTracking = new Dictionary<FlashlightBeamTarget, BeamHitInfo>();
 
-            SetDimensions(m_InitialDimensions);
+            ResetDimensions();
             calculateCartesianPoints();
         }
 
@@ -101,7 +101,7 @@ namespace GraVRty.Combat
 
                 if (!targetTracking.TryGetValue(target, out BeamHitInfo beamHitInfo))
                 {
-                    beamHitInfo = new BeamHitInfo(m_Raycasts);
+                    beamHitInfo = new BeamHitInfo(this, m_Raycasts);
                 }
 
                 targetTracking[target] = beamHitInfo.PlusRayHit(rayHitInfo.point);
@@ -111,6 +111,11 @@ namespace GraVRty.Combat
             {
                 pair.Key.TrackBeamHit(pair.Value);
             }
+        }
+
+        public void ResetDimensions ()
+        {
+            SetDimensions(m_InitialDimensions);
         }
 
         public void SetDimensions (Dimensions dimensions)

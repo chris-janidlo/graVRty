@@ -9,11 +9,14 @@ namespace GraVRty.Combat
         public int RayHitCount, TotalRaycasts;
         public Vector3 Centroid;
 
+        public FlashlightBeam SourceBeam;
+
         public float PercentageHit => (float) RayHitCount / TotalRaycasts;
 
-        public BeamHitInfo (int totalRaycasts)
+        public BeamHitInfo (FlashlightBeam sourceBeam, int raycasts)
         {
-            TotalRaycasts = totalRaycasts;
+            SourceBeam = sourceBeam;
+            TotalRaycasts = raycasts;
             RayHitCount = 0;
             Centroid = Vector3.zero;
         }

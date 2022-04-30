@@ -1095,6 +1095,7 @@ MonoBehaviour:
   m_FadeInEase: 7
   m_Loadables:
   - {fileID: 11400000, guid: 4f3a345680f788f40bd9d6f6cf9a1634, type: 2}
+  - {fileID: 11400000, guid: 6ada8c26cae4d7546aa8b7fc6f7b0c5b, type: 2}
   m_FadeHelmet: {fileID: 5637596961203961298}
 --- !u!1 &7754722410207979839
 GameObject:

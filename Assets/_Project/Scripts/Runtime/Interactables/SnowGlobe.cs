@@ -48,24 +48,9 @@ namespace GraVRty.Interactables
 
         public void OnBeamStay (BeamHitInfo beamHitInfo)
         {
-            if (beamHitInfo.PercentageHit >= m_BeamHitPercentageToTriggerFocusedBeam)
-            {
-                FlashlightBeam.Dimensions dimensions = beamHitInfo.SourceBeam.CurrentDimensions;
-                dimensions.Length = Vector3.Distance(beamHitInfo.Centroid, beamHitInfo.SourceBeam.transform.position) + m_BeamCutoffFudge;
-                beamHitInfo.SourceBeam.SetDimensions(dimensions);
+            manageFocusedBeamLifetime(beamHitInfo);
 
-                if (currentFocusedFlashlightBeam == null)
-                {
-                    currentFocusedFlashlightBeam = FocusedFlashlightBeamPool.Get<FlashlightBeam>(transform);
-                }
-
-                orientBeam(beamHitInfo);
-            }
-            else
-            {
-                beamHitInfo.SourceBeam.ResetDimensions();
-                tryKillBeam();
-            }
+            if (currentFocusedFlashlightBeam != null) orientFocusedBeam(beamHitInfo);
         }
 
         public void OnBeamExited (FlashlightBeam flashlightBeam)
@@ -83,7 +68,27 @@ namespace GraVRty.Interactables
             }
         }
 
-        void orientBeam (BeamHitInfo beamHitInfo)
+        void manageFocusedBeamLifetime (BeamHitInfo beamHitInfo)
+        {
+            if (beamHitInfo.PercentageHit >= m_BeamHitPercentageToTriggerFocusedBeam)
+            {
+                FlashlightBeam.Dimensions dimensions = beamHitInfo.SourceBeam.CurrentDimensions;
+                dimensions.Length = Vector3.Distance(beamHitInfo.Centroid, beamHitInfo.SourceBeam.transform.position) + m_BeamCutoffFudge;
+                beamHitInfo.SourceBeam.SetDimensions(dimensions);
+
+                if (currentFocusedFlashlightBeam == null)
+                {
+                    currentFocusedFlashlightBeam = FocusedFlashlightBeamPool.Get<FlashlightBeam>(transform);
+                }
+            }
+            else
+            {
+                beamHitInfo.SourceBeam.ResetDimensions();
+                tryKillBeam();
+            }
+        }
+
+        void orientFocusedBeam (BeamHitInfo beamHitInfo)
         {
             Vector3 reflectionPlaneNormal = (transform.position - beamHitInfo.SourceBeam.transform.position).normalized;
             Vector3 beamDirection = beamHitInfo.SourceBeam.transform.forward;

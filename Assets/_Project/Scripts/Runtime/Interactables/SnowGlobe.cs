@@ -58,6 +58,8 @@ namespace GraVRty.Interactables
                 {
                     currentFocusedFlashlightBeam = FocusedFlashlightBeamPool.Get<FlashlightBeam>(transform);
                 }
+
+                orientBeam(beamHitInfo);
             }
             else
             {
@@ -79,6 +81,14 @@ namespace GraVRty.Interactables
                 FocusedFlashlightBeamPool.Release(currentFocusedFlashlightBeam);
                 currentFocusedFlashlightBeam = null;
             }
+        }
+
+        void orientBeam (BeamHitInfo beamHitInfo)
+        {
+            Vector3 reflectionPlaneNormal = (transform.position - beamHitInfo.SourceBeam.transform.position).normalized;
+            Vector3 beamDirection = beamHitInfo.SourceBeam.transform.forward;
+
+            currentFocusedFlashlightBeam.transform.forward = -Vector3.Reflect(beamDirection, reflectionPlaneNormal).normalized;
         }
     }
 }

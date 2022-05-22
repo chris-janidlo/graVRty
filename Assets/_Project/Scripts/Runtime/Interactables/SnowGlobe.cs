@@ -10,17 +10,28 @@ namespace GraVRty.Interactables
 {
     public class SnowGlobe : MonoBehaviour
     {
+        [SerializeField] float m_Radius;
+
         [Range(0, 1)]
         [SerializeField] float m_BeamHitPercentageToTriggerFocusedBeam;
         [SerializeField] float m_BeamCutoffFudge;
 
         [SerializeField] Rigidbody m_Rigidbody;
-        [SerializeField] Transform m_InsidesParent;
+        [SerializeField] Transform m_InsidesParent, m_Glass;
+        [SerializeField] SphereCollider m_SphereCollider;
+
         [SerializeField] Gravity m_Gravity;
         [SerializeField] LoadableSemiEagerGameObjectPool FocusedFlashlightBeamPool;
 
         XRBaseController currentController;
-        FlashlightBeam currentFocusedFlashlightBeam;
+        FlashlightBeam currentFocusedBeam;
+
+        void Start ()
+        {
+            m_SphereCollider.radius = m_Radius;
+            m_Glass.transform.localScale = m_Radius * 2 * Vector3.one;
+            // TODO: set m_InsidesParent scale
+        }
 
         void Update ()
         {
@@ -48,52 +59,47 @@ namespace GraVRty.Interactables
 
         public void OnBeamStay (BeamHitInfo beamHitInfo)
         {
-            manageFocusedBeamLifetime(beamHitInfo);
-
-            if (currentFocusedFlashlightBeam != null) orientFocusedBeam(beamHitInfo);
+            focusBeam(beamHitInfo);
         }
 
         public void OnBeamExited (FlashlightBeam flashlightBeam)
         {
             flashlightBeam.ResetDimensions();
-            tryKillBeam();
+            tryKillFocusedBeam();
         }
 
-        void tryKillBeam ()
+        void focusBeam (BeamHitInfo beamHitInfo)
         {
-            if (currentFocusedFlashlightBeam != null)
-            {
-                FocusedFlashlightBeamPool.Release(currentFocusedFlashlightBeam);
-                currentFocusedFlashlightBeam = null;
-            }
-        }
+            FlashlightBeam unfocusedBeam = beamHitInfo.SourceBeam;
 
-        void manageFocusedBeamLifetime (BeamHitInfo beamHitInfo)
-        {
             if (beamHitInfo.PercentageHit >= m_BeamHitPercentageToTriggerFocusedBeam)
             {
-                FlashlightBeam.Dimensions dimensions = beamHitInfo.SourceBeam.CurrentDimensions;
-                dimensions.Length = Vector3.Distance(beamHitInfo.Centroid, beamHitInfo.SourceBeam.transform.position) + m_BeamCutoffFudge;
-                beamHitInfo.SourceBeam.SetDimensions(dimensions);
+                float shortenedBeamLength = Vector3.Distance(beamHitInfo.Centroid, unfocusedBeam.transform.position) + m_BeamCutoffFudge;
+                unfocusedBeam.SetLength(shortenedBeamLength);
 
-                if (currentFocusedFlashlightBeam == null)
+                if (currentFocusedBeam == null)
                 {
-                    currentFocusedFlashlightBeam = FocusedFlashlightBeamPool.Get<FlashlightBeam>(transform);
+                    currentFocusedBeam = FocusedFlashlightBeamPool.Get<FlashlightBeam>(transform);
                 }
+
+                Vector3 reflectionPlaneNormal = (transform.position - unfocusedBeam.transform.position).normalized;
+                currentFocusedBeam.transform.forward = -Vector3.Reflect(unfocusedBeam.transform.forward, reflectionPlaneNormal).normalized;
+                currentFocusedBeam.SetRadius(m_Radius);
             }
             else
             {
-                beamHitInfo.SourceBeam.ResetDimensions();
-                tryKillBeam();
+                unfocusedBeam.ResetDimensions();
+                tryKillFocusedBeam();
             }
         }
 
-        void orientFocusedBeam (BeamHitInfo beamHitInfo)
+        void tryKillFocusedBeam()
         {
-            Vector3 reflectionPlaneNormal = (transform.position - beamHitInfo.SourceBeam.transform.position).normalized;
-            Vector3 beamDirection = beamHitInfo.SourceBeam.transform.forward;
-
-            currentFocusedFlashlightBeam.transform.forward = -Vector3.Reflect(beamDirection, reflectionPlaneNormal).normalized;
+            if (currentFocusedBeam != null)
+            {
+                FocusedFlashlightBeamPool.Release(currentFocusedBeam);
+                currentFocusedBeam = null;
+            }
         }
     }
 }

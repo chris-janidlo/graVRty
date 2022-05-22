@@ -84,6 +84,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8014823862794569791, guid: d22abf6b3d0897e428255259715e190d,
         type: 3}
+      propertyPath: m_RaycastLayers.m_Bits
+      value: 1143
+      objectReference: {fileID: 0}
+    - target: {fileID: 8014823862794569791, guid: d22abf6b3d0897e428255259715e190d,
+        type: 3}
       propertyPath: m_InitialDimensions.Length
       value: 2
       objectReference: {fileID: 0}

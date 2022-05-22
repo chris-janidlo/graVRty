@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Profiling;
 using crass;
+using NaughtyAttributes;
 
 namespace GraVRty.Combat
 {
@@ -24,8 +25,32 @@ namespace GraVRty.Combat
         [Serializable]
         public struct Dimensions
         {
-            public float Angle, Length;
+            [ShowIf("Direction", Direction.PointToBase)]
+            [AllowNesting]
+            public float Angle;
+            [ShowIf("Direction", Direction.BaseToPoint)]
+            [AllowNesting]
+            public float Radius;
+            public float Length;
             public Direction Direction;
+
+            public Dimensions (float angle, float radius, float length, Direction direction)
+            {
+                Angle = angle;
+                Radius = radius;
+                Length = length;
+                Direction = direction;
+            }
+
+            public Dimensions WithLength (float length)
+            {
+                return new Dimensions(Angle, Radius, length, Direction);
+            }
+
+            public Dimensions WithRadius (float radius)
+            {
+                return new Dimensions(Angle, radius, Length, Direction);
+            }
         }
 
         [SerializeField] Dimensions m_InitialDimensions;
@@ -122,28 +147,52 @@ namespace GraVRty.Combat
         {
             CurrentDimensions = dimensions;
 
+            Vector3 position;
+            Quaternion rotation;
+
+            // radius / length = tan(angle)
+            float length = CurrentDimensions.Length;
+            float radius, angle;
+
             switch (CurrentDimensions.Direction)
             {
                 case Direction.BaseToPoint:
-                    m_Offset.localRotation = Quaternion.Euler(0, 180, 0);
-                    m_Offset.localPosition = Vector3.forward * CurrentDimensions.Length;
+                    position = Vector3.forward * CurrentDimensions.Length;
+                    rotation = Quaternion.Euler(0, 180, 0);
+                    
+                    radius = CurrentDimensions.Radius;
+                    angle = Mathf.Atan(radius / length) * Mathf.Rad2Deg * 2;
                     break;
 
                 case Direction.PointToBase:
-                    m_Offset.localRotation = Quaternion.identity;
-                    m_Offset.localPosition = Vector3.zero;
+                    position = Vector3.zero;
+                    rotation = Quaternion.identity;
+
+                    angle = CurrentDimensions.Angle;
+                    radius = length * Mathf.Tan(angle * Mathf.Deg2Rad / 2);
                     break;
 
                 default:
                     throw new InvalidOperationException($"{nameof(CurrentDimensions.Direction)} has unexpected {typeof(Direction).Name} value {CurrentDimensions.Direction}");
             }
 
-            m_Light.range = CurrentDimensions.Length;
-            m_Light.spotAngle = CurrentDimensions.Angle;
+            m_Offset.localPosition = position;
+            m_Offset.localRotation = rotation;
 
-            // radius / length = tan(angle)
-            float baseRadius = CurrentDimensions.Length * Mathf.Tan(CurrentDimensions.Angle * Mathf.Deg2Rad / 2);
-            m_ConeScaler.localScale = new Vector3(baseRadius, baseRadius, CurrentDimensions.Length);
+            m_Light.range = length;
+            m_Light.spotAngle = angle;
+
+            m_ConeScaler.localScale = new Vector3(radius, radius, CurrentDimensions.Length);
+        }
+
+        public void SetLength (float length)
+        {
+            SetDimensions(CurrentDimensions.WithLength(length));
+        }
+
+        public void SetRadius (float radius)
+        {
+            SetDimensions(CurrentDimensions.WithRadius(radius));
         }
 
         void calculateCartesianPoints ()

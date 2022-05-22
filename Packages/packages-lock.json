@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "e81d64830309e5ca06824cf9f9b3d9efacf4faad"
     },
+    "com.dbrizov.naughtyattributes": {
+      "version": "https://github.com/dbrizov/NaughtyAttributes.git#upm",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "8a8fa5a9659a6d63f196391c71e06c4286c8acd7"
+    },
     "com.mambojambostudios.unity-atoms-base-atoms": {
       "version": "4.1.0",
       "depth": 0,

@@ -51,10 +51,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b4ad81e4c86fac4aa1fa04c0fd36cd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Radius: 0.12
   m_BeamHitPercentageToTriggerFocusedBeam: 0.5
   m_BeamCutoffFudge: 0.1
   m_Rigidbody: {fileID: 1287107450423476654}
   m_InsidesParent: {fileID: 2370480586810438278}
+  m_Glass: {fileID: 2370480586969171203}
+  m_SphereCollider: {fileID: 7987191365559741610}
   m_Gravity: {fileID: 11400000, guid: ce038ebd21d1286438a15c6becfe5d36, type: 2}
   FocusedFlashlightBeamPool: {fileID: 11400000, guid: 6ada8c26cae4d7546aa8b7fc6f7b0c5b,
     type: 2}

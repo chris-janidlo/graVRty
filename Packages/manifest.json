@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "com.crass.spellbook-unity": "https://github.com/crassSandwich/spellbook-unity.git",
+    "com.dbrizov.naughtyattributes": "https://github.com/dbrizov/NaughtyAttributes.git#upm",
     "com.mambojambostudios.unity-atoms-base-atoms": "4.1.0",
     "com.mambojambostudios.unity-atoms-core": "4.1.0",
     "com.mambojambostudios.unity-atoms-fsm": "4.1.0",

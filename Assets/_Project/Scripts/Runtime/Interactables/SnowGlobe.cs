@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using NaughtyAttributes;
 using GraVRty.CorePhysics;
 using GraVRty.Combat;
 using GraVRty.Loading;
@@ -15,6 +16,10 @@ namespace GraVRty.Interactables
         [Range(0, 1)]
         [SerializeField] float m_BeamHitPercentageToTriggerFocusedBeam;
         [SerializeField] float m_BeamCutoffFudge;
+        [MinMaxSlider(0, 100)]
+        [SerializeField] Vector2 m_FocusedBeamLengthRange;
+        [MinMaxSlider(0, 5)]
+        [SerializeField] Vector2 m_FlashlightDistanceClampRange;
 
         [SerializeField] Rigidbody m_Rigidbody;
         [SerializeField] Transform m_InsidesParent, m_Glass;
@@ -74,17 +79,19 @@ namespace GraVRty.Interactables
 
             if (beamHitInfo.PercentageHit >= m_BeamHitPercentageToTriggerFocusedBeam)
             {
-                float shortenedBeamLength = Vector3.Distance(beamHitInfo.Centroid, unfocusedBeam.transform.position) + m_BeamCutoffFudge;
-                unfocusedBeam.SetLength(shortenedBeamLength);
+                Vector3 flashlightPosition = unfocusedBeam.transform.position;
+
+                float shortenedBeamLength = Vector3.Distance(beamHitInfo.Centroid, flashlightPosition) + m_BeamCutoffFudge;
+                unfocusedBeam.SetDimension(length: shortenedBeamLength);
 
                 if (currentFocusedBeam == null)
                 {
                     currentFocusedBeam = FocusedFlashlightBeamPool.Get<FlashlightBeam>(transform);
                 }
 
-                Vector3 reflectionPlaneNormal = (transform.position - unfocusedBeam.transform.position).normalized;
+                Vector3 reflectionPlaneNormal = (transform.position - flashlightPosition).normalized;
                 currentFocusedBeam.transform.forward = -Vector3.Reflect(unfocusedBeam.transform.forward, reflectionPlaneNormal).normalized;
-                currentFocusedBeam.SetRadius(m_Radius);
+                currentFocusedBeam.SetDimension(length: focusedBeamLength(flashlightPosition), radius: m_Radius);
             }
             else
             {
@@ -93,13 +100,36 @@ namespace GraVRty.Interactables
             }
         }
 
-        void tryKillFocusedBeam()
+        void tryKillFocusedBeam ()
         {
             if (currentFocusedBeam != null)
             {
                 FocusedFlashlightBeamPool.Release(currentFocusedBeam);
                 currentFocusedBeam = null;
             }
+        }
+
+        float focusedBeamLength (Vector3 flashlightPosition)
+        {
+            Vector3 snowGlobePosition = transform.position;
+
+            float
+                minDistance = m_FlashlightDistanceClampRange.x,
+                maxDistance = m_FlashlightDistanceClampRange.y,
+                distanceRange = maxDistance - minDistance,
+
+                minLength = m_FocusedBeamLengthRange.x,
+                maxLength = m_FocusedBeamLengthRange.y,
+                lengthRange = maxLength - minLength;
+
+            float distance = Mathf.Clamp
+            (
+                Vector3.Distance(snowGlobePosition, flashlightPosition),
+                minDistance,
+                maxDistance
+            );
+
+            return ((distance - minDistance) * lengthRange / distanceRange) + minLength;
         }
     }
 }

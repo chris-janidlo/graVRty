@@ -34,6 +34,17 @@ namespace GraVRty.Combat
             public float Length;
             public Direction Direction;
 
+            public static bool operator == (Dimensions l, Dimensions r)
+            {
+                return
+                    l.Angle == r.Angle &&
+                    l.Radius == r.Radius &&
+                    l.Length == r.Length &&
+                    l.Direction == r.Direction;
+            }
+
+            public static bool operator != (Dimensions l, Dimensions r) => !(l == r);
+
             public Dimensions (float angle, float radius, float length, Direction direction)
             {
                 Angle = angle;
@@ -42,14 +53,9 @@ namespace GraVRty.Combat
                 Direction = direction;
             }
 
-            public Dimensions WithLength (float length)
+            public Dimensions With (float? angle = null, float? radius = null, float? length = null, Direction? direction = null)
             {
-                return new Dimensions(Angle, Radius, length, Direction);
-            }
-
-            public Dimensions WithRadius (float radius)
-            {
-                return new Dimensions(Angle, radius, Length, Direction);
+                return new Dimensions(angle ?? Angle, radius ?? Radius, length ?? Length, direction ?? Direction);
             }
         }
 
@@ -157,7 +163,7 @@ namespace GraVRty.Combat
             switch (CurrentDimensions.Direction)
             {
                 case Direction.BaseToPoint:
-                    position = Vector3.forward * CurrentDimensions.Length;
+                    position = Vector3.forward * length;
                     rotation = Quaternion.Euler(0, 180, 0);
                     
                     radius = CurrentDimensions.Radius;
@@ -185,14 +191,11 @@ namespace GraVRty.Combat
             m_ConeScaler.localScale = new Vector3(radius, radius, CurrentDimensions.Length);
         }
 
-        public void SetLength (float length)
+        public void SetDimension (float? length = null, float? angle = null, float? radius = null, Direction? direction = null)
         {
-            SetDimensions(CurrentDimensions.WithLength(length));
-        }
-
-        public void SetRadius (float radius)
-        {
-            SetDimensions(CurrentDimensions.WithRadius(radius));
+            Dimensions newDimensions = CurrentDimensions.With(length: length, angle: angle, radius: radius, direction: direction);
+            if (newDimensions == CurrentDimensions) return;
+            SetDimensions(newDimensions);
         }
 
         void calculateCartesianPoints ()

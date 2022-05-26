@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2370480585894007199}
   - component: {fileID: 5467348002797915435}
-  - component: {fileID: 5787662170440587037}
+  - component: {fileID: 6367118867501623593}
   - component: {fileID: 91562756279357173}
   - component: {fileID: 1287107450423476654}
   - component: {fileID: 7987191365559741610}
@@ -52,18 +52,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Radius: 0.12
-  m_BeamHitPercentageToTriggerFocusedBeam: 0.5
-  m_BeamCutoffFudge: 0.1
-  m_FocusedBeamLengthRange: {x: 1, y: 7}
-  m_FlashlightDistanceClampRange: {x: 0.2, y: 1}
+  m_Focuser: {fileID: 6367118867501623593}
   m_Rigidbody: {fileID: 1287107450423476654}
   m_InsidesParent: {fileID: 2370480586810438278}
   m_Glass: {fileID: 2370480586969171203}
   m_SphereCollider: {fileID: 7987191365559741610}
   m_Gravity: {fileID: 11400000, guid: ce038ebd21d1286438a15c6becfe5d36, type: 2}
-  FocusedFlashlightBeamPool: {fileID: 11400000, guid: 6ada8c26cae4d7546aa8b7fc6f7b0c5b,
-    type: 2}
---- !u!114 &5787662170440587037
+--- !u!114 &6367118867501623593
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -72,7 +67,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2370480585894007192}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5234e6e598529e4b827d718fe3cd1cd, type: 3}
+  m_Script: {fileID: 11500000, guid: 2421d28a067286d42be11091130eb2b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   OnBeamEntered:
@@ -80,34 +75,17 @@ MonoBehaviour:
       m_Calls: []
   OnBeamStay:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5467348002797915435}
-        m_TargetAssemblyTypeName: GraVRty.Interactables.SnowGlobe, GraVRty.Runtime
-        m_MethodName: OnBeamStay
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnBeamExited:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5467348002797915435}
-        m_TargetAssemblyTypeName: GraVRty.Interactables.SnowGlobe, GraVRty.Runtime
-        m_MethodName: OnBeamExited
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
+  Radius: 0
+  m_BeamHitPercentageToTriggerFocusedBeam: 0.5
+  m_BeamCutoffFudge: 0.1
+  m_FocusedBeamLengthRange: {x: 1, y: 7}
+  m_FlashlightDistanceClampRange: {x: 0.2, y: 1}
+  FocusedFlashlightBeamPool: {fileID: 11400000, guid: 6ada8c26cae4d7546aa8b7fc6f7b0c5b,
+    type: 2}
 --- !u!114 &91562756279357173
 MonoBehaviour:
   m_ObjectHideFlags: 0

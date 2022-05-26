@@ -36,6 +36,7 @@ namespace GraVRty.Combat
 
             public static bool operator == (Dimensions l, Dimensions r)
             {
+                // should this only use one of Angle or Radius depending on the value of Direction?
                 return
                     l.Angle == r.Angle &&
                     l.Radius == r.Radius &&
@@ -56,6 +57,17 @@ namespace GraVRty.Combat
             public Dimensions With (float? angle = null, float? radius = null, float? length = null, Direction? direction = null)
             {
                 return new Dimensions(angle ?? Angle, radius ?? Radius, length ?? Length, direction ?? Direction);
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is Dimensions other && this == other;
+            }
+
+            public override int GetHashCode()
+            {
+                // should this only use one of Angle or Radius depending on the value of Direction?
+                return (Angle, Radius, Length, Direction).GetHashCode();
             }
         }
 

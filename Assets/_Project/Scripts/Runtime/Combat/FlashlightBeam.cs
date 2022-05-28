@@ -84,7 +84,9 @@ namespace GraVRty.Combat
         public Dimensions CurrentDimensions { get; private set; }
 
         List<Vector3> circlePoints;
-        Dictionary<FlashlightBeamTarget, BeamHitInfo> targetTracking;
+        Dictionary<FlashlightBeamTarget, BeamHitInfo> hitDataThisFrame; // create this at class scope to limit GC
+        HashSet<FlashlightBeamTarget> targetsHitLastFrame;
+        HashSet<FlashlightBeamTarget> targetsToManage;
 
         void Start ()
         {
@@ -93,7 +95,9 @@ namespace GraVRty.Combat
                 throw new Exception("Flashlight Light should be a spotlight");
             }
 
-            targetTracking = new Dictionary<FlashlightBeamTarget, BeamHitInfo>();
+            hitDataThisFrame = new Dictionary<FlashlightBeamTarget, BeamHitInfo>();
+            targetsHitLastFrame = new HashSet<FlashlightBeamTarget>();
+            targetsToManage = new HashSet<FlashlightBeamTarget>();
 
             ResetDimensions();
             calculateCartesianPoints();
@@ -101,59 +105,12 @@ namespace GraVRty.Combat
 
         void FixedUpdate ()
         {
-            targetTracking.Clear();
+            targetTracking();
+        }
 
-            foreach (Vector3 circlePoint in circlePoints)
-            {
-                Vector3 circlePointInWorld = m_ConeBaseTransform.TransformPoint(circlePoint);
-
-                Vector3 startPosition, endPosition;
-                switch (CurrentDimensions.Direction)
-                {
-                    case Direction.PointToBase:
-                        startPosition = m_ConePointTransform.position;
-                        endPosition = circlePointInWorld;
-                        break;
-
-                    case Direction.BaseToPoint:
-                        startPosition = circlePointInWorld;
-                        endPosition = m_ConePointTransform.position;
-                        break;
-
-                    default:
-                        throw new InvalidOperationException($"{nameof(CurrentDimensions.Direction)} has unexpected {typeof(Direction).Name} value {CurrentDimensions.Direction}");
-                }
-
-                Vector3 rayCastDifference = endPosition - startPosition;
-
-                if (!Physics.Raycast(startPosition, rayCastDifference.normalized, out RaycastHit rayHitInfo, rayCastDifference.magnitude, m_RaycastLayers))
-                {
-                    drawRay(startPosition, rayCastDifference, RaycastHitState.Missed);
-                    continue;
-                }
-
-                Vector3 hitDifference = rayHitInfo.point - startPosition;
-
-                if (!rayHitInfo.collider.TryGetComponent(out FlashlightBeamTarget target))
-                {
-                    drawRay(startPosition, hitDifference, RaycastHitState.HitNonTarget);
-                    continue;
-                }
-
-                drawRay(startPosition, hitDifference, RaycastHitState.HitTarget);
-
-                if (!targetTracking.TryGetValue(target, out BeamHitInfo beamHitInfo))
-                {
-                    beamHitInfo = new BeamHitInfo(this, m_Raycasts);
-                }
-
-                targetTracking[target] = beamHitInfo.PlusRayHit(rayHitInfo.point);
-            }
-
-            foreach (var pair in targetTracking)
-            {
-                pair.Key.TrackBeamHit(pair.Value);
-            }
+        void OnDisable ()
+        {
+            cleanupTargetHits();
         }
 
         public void ResetDimensions ()
@@ -238,5 +195,100 @@ namespace GraVRty.Combat
             if (m_DrawDebugRays) Debug.DrawRay(start, direction, m_DebugRayColors[hitState]);
 #endif // UNITY_EDITOR || DEVELOPMENT_BUILD
         }
-    }
+
+        void targetTracking ()
+        {
+            hitDataThisFrame.Clear();
+            targetsToManage.Clear();
+
+            foreach (Vector3 circlePoint in circlePoints)
+            {
+                castRay(circlePoint);
+            }
+
+            targetsToManage.UnionWith(targetsHitLastFrame);
+
+            foreach (FlashlightBeamTarget target in targetsToManage)
+            {
+                manageTargetHitState(target);
+            }
+        }
+
+        void castRay (Vector3 circlePoint)
+        {
+            Vector3 circlePointInWorld = m_ConeBaseTransform.TransformPoint(circlePoint);
+
+            Vector3 startPosition, endPosition;
+            switch (CurrentDimensions.Direction)
+            {
+                case Direction.PointToBase:
+                    startPosition = m_ConePointTransform.position;
+                    endPosition = circlePointInWorld;
+                    break;
+
+                case Direction.BaseToPoint:
+                    startPosition = circlePointInWorld;
+                    endPosition = m_ConePointTransform.position;
+                    break;
+
+                default:
+                    throw new InvalidOperationException($"{nameof(CurrentDimensions.Direction)} has unexpected {typeof(Direction).Name} value {CurrentDimensions.Direction}");
+            }
+
+            Vector3 rayCastDifference = endPosition - startPosition;
+
+            if (!Physics.Raycast(startPosition, rayCastDifference.normalized, out RaycastHit rayHitInfo, rayCastDifference.magnitude, m_RaycastLayers))
+            {
+                drawRay(startPosition, rayCastDifference, RaycastHitState.Missed);
+                return;
+            }
+
+            Vector3 hitDifference = rayHitInfo.point - startPosition;
+
+            if (!rayHitInfo.collider.TryGetComponent(out FlashlightBeamTarget target))
+            {
+                drawRay(startPosition, hitDifference, RaycastHitState.HitNonTarget);
+                return;
+            }
+
+            drawRay(startPosition, hitDifference, RaycastHitState.HitTarget);
+
+            if (!hitDataThisFrame.TryGetValue(target, out BeamHitInfo beamHitInfo))
+            {
+                beamHitInfo = new BeamHitInfo(this, m_Raycasts);
+            }
+
+            hitDataThisFrame[target] = beamHitInfo.PlusRayHit(rayHitInfo.point);
+            targetsToManage.Add(target);
+        }
+
+        void manageTargetHitState (FlashlightBeamTarget target)
+        {
+            if (hitDataThisFrame.TryGetValue(target, out BeamHitInfo hitInfo))
+            {
+                if (!targetsHitLastFrame.Contains(target)) target.OnBeamEntered.Invoke(hitInfo);
+                target.OnBeamStay.Invoke(hitInfo);
+                targetsHitLastFrame.Add(target);
+            }
+            else if (targetsHitLastFrame.Contains(target))
+            {
+                target.OnBeamExited.Invoke(this);
+                targetsHitLastFrame.Remove(target);
+            }
+            else
+            {
+                throw new InvalidOperationException($"should only call {nameof(manageTargetHitState)} on a target that was hit on the current or immediately previous frame");
+            }
+        }
+
+        void cleanupTargetHits ()
+        {
+            foreach (FlashlightBeamTarget target in targetsHitLastFrame)
+            {
+                target.OnBeamExited.Invoke(this);
+            }
+
+            targetsHitLastFrame.Clear();
+        }
+    } 
 }

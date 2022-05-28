@@ -189,13 +189,6 @@ namespace GraVRty.Combat
             }
         }
 
-        void drawRay (Vector3 start, Vector3 direction, RaycastHitState hitState)
-        {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if (m_DrawDebugRays) Debug.DrawRay(start, direction, m_DebugRayColors[hitState]);
-#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
-        }
-
         void targetTracking ()
         {
             hitDataThisFrame.Clear();
@@ -260,6 +253,13 @@ namespace GraVRty.Combat
 
             hitDataThisFrame[target] = beamHitInfo.PlusRayHit(rayHitInfo.point);
             targetsToManage.Add(target);
+        }
+
+        void drawRay(Vector3 start, Vector3 direction, RaycastHitState hitState)
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (m_DrawDebugRays) Debug.DrawRay(start, direction, m_DebugRayColors[hitState]);
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
         }
 
         void manageTargetHitState (FlashlightBeamTarget target)

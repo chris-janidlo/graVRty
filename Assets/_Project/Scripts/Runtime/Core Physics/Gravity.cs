@@ -3,11 +3,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GraVRty.Loading;
 
 namespace GraVRty.CorePhysics
 {
     [CreateAssetMenu(menuName = "GraVRty/Gravity Manager", fileName = "newGravityManager.asset")]
-    public class Gravity : ScriptableObject
+    public class Gravity : Loadable
     {
         [SerializeField] float m_GravityAcceleration, m_FluxDragMax;
         [SerializeField] AnimationCurve m_FluxDragLerpByPressStrength, m_FluxDragLerpSpeedByPressStrength;
@@ -21,10 +22,11 @@ namespace GraVRty.CorePhysics
 
         float dragLerp;
 
-        public void Initialize (Transform initialDirectionSource)
+        public override IEnumerator LoadRoutine ()
         {
             State = GravityState.Active;
-            setOrientation(initialDirectionSource);
+            setOrientation(Vector3.up, Quaternion.identity);
+            yield break;
         }
 
         public void SetGravity (Transform directionSource, float strength)
@@ -62,8 +64,13 @@ namespace GraVRty.CorePhysics
 
         void setOrientation (Transform source)
         {
-            Direction = -source.up;
-            Rotation = source.rotation;
+            setOrientation(source.up, source.rotation);
+        }
+
+        void setOrientation (Vector3 up, Quaternion rotation)
+        {
+            Direction = -up;
+            Rotation = rotation;
 
             Physics.gravity = Direction * m_GravityAcceleration;
         }

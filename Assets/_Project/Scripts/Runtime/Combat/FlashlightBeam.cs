@@ -74,6 +74,9 @@ namespace GraVRty.Combat
         [SerializeField] Dimensions m_InitialDimensions;
         [SerializeField] int m_Raycasts;
 
+        [Range(0, 1)]
+        [SerializeField] float m_LockOnStrength;
+
         [SerializeField] LayerMask m_RaycastLayers;
         [SerializeField] bool m_DrawDebugRays;
         [SerializeField] EnumMap<RaycastHitState, Color> m_DebugRayColors;
@@ -305,8 +308,7 @@ namespace GraVRty.Combat
             {
                 if (!contact || hitInfo.PercentageHit <= target.BeamHitPercentageToExitLock)
                 {
-                    target.OnLockExited.Invoke(this);
-                    currentLockOn = null;
+                    stopLockOn();
                 }
                 else
                 {
@@ -325,7 +327,19 @@ namespace GraVRty.Combat
 
         void followLockOn ()
         {
-            Debug.LogWarning($"locked on to {currentLockOn.name} at centroid {lockOnCentroid}");
+            Vector3
+                zeroStrengthDirection = transform.parent.forward,
+                fullStrengthDirection = (lockOnCentroid - transform.position).normalized,
+                lerpedDirection = Vector3.Slerp(zeroStrengthDirection, fullStrengthDirection, m_LockOnStrength);
+
+            transform.forward = lerpedDirection;
+        }
+
+        void stopLockOn ()
+        {
+            transform.forward = transform.parent.forward;
+            currentLockOn.OnLockExited.Invoke(this);
+            currentLockOn = null;
         }
 
         void cleanupTargetHits ()
@@ -337,11 +351,7 @@ namespace GraVRty.Combat
 
             targetsHitLastFrame.Clear();
 
-            if (currentLockOn != null)
-            {
-                currentLockOn.OnLockExited.Invoke(this);
-                currentLockOn = null;
-            }
+            if (currentLockOn != null) stopLockOn();
         }
     } 
 }

@@ -142,13 +142,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_InitialDimensions:
     Angle: 15
+    Radius: 0
     Length: 20
     Direction: 0
   m_Raycasts: 50
+  m_LockOnStrength: 0.75
   m_RaycastLayers:
     serializedVersion: 2
     m_Bits: 1399
-  m_DrawDebugRays: 1
+  m_DrawDebugRays: 0
   m_DebugRayColors:
     m_enums: 010000000200000000000000
     m_values:

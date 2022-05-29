@@ -88,6 +88,9 @@ namespace GraVRty.Combat
         HashSet<FlashlightBeamTarget> targetsHitLastFrame;
         HashSet<FlashlightBeamTarget> targetsToManage;
 
+        FlashlightBeamTarget currentLockOn;
+        Vector3 lockOnCentroid;
+
         void Start ()
         {
             if (m_Light.type != LightType.Spot)
@@ -106,6 +109,7 @@ namespace GraVRty.Combat
         void FixedUpdate ()
         {
             targetTracking();
+            if (currentLockOn != null) followLockOn();
         }
 
         void OnDisable ()
@@ -201,6 +205,14 @@ namespace GraVRty.Combat
 
             targetsToManage.UnionWith(targetsHitLastFrame);
 
+            // manage currentLockOn separately so that we can stop locking on to it
+            // before we consider locking on to other lockable targets
+            if (currentLockOn != null)
+            {
+                targetsToManage.Remove(currentLockOn);
+                manageTargetHitState(currentLockOn);
+            }
+
             foreach (FlashlightBeamTarget target in targetsToManage)
             {
                 manageTargetHitState(target);
@@ -264,14 +276,20 @@ namespace GraVRty.Combat
 
         void manageTargetHitState (FlashlightBeamTarget target)
         {
+            bool contact;
+
             if (hitDataThisFrame.TryGetValue(target, out BeamHitInfo hitInfo))
             {
+                contact = true;
+
                 if (!targetsHitLastFrame.Contains(target)) target.OnBeamEntered.Invoke(hitInfo);
                 target.OnBeamStay.Invoke(hitInfo);
                 targetsHitLastFrame.Add(target);
             }
             else if (targetsHitLastFrame.Contains(target))
             {
+                contact = false;
+
                 target.OnBeamExited.Invoke(this);
                 targetsHitLastFrame.Remove(target);
             }
@@ -279,6 +297,35 @@ namespace GraVRty.Combat
             {
                 throw new InvalidOperationException($"should only call {nameof(manageTargetHitState)} on a target that was hit on the current or immediately previous frame");
             }
+
+            if (!target.Lockable
+                || currentLockOn != null && target != currentLockOn) return;
+
+            if (currentLockOn != null)
+            {
+                if (!contact || hitInfo.PercentageHit <= target.BeamHitPercentageToExitLock)
+                {
+                    target.OnLockExited.Invoke(this);
+                    currentLockOn = null;
+                }
+                else
+                {
+                    target.OnLockStay.Invoke(hitInfo);
+                    lockOnCentroid = hitInfo.Centroid;
+                }
+            }
+            else if (contact && hitInfo.PercentageHit >= target.BeamHitPercentageToEnterLock)
+            {
+                target.OnLockEntered.Invoke(hitInfo);
+                target.OnLockStay.Invoke(hitInfo);
+                currentLockOn = target;
+                lockOnCentroid = hitInfo.Centroid;
+            }
+        }
+
+        void followLockOn ()
+        {
+            Debug.LogWarning($"locked on to {currentLockOn.name} at centroid {lockOnCentroid}");
         }
 
         void cleanupTargetHits ()
@@ -289,6 +336,12 @@ namespace GraVRty.Combat
             }
 
             targetsHitLastFrame.Clear();
+
+            if (currentLockOn != null)
+            {
+                currentLockOn.OnLockExited.Invoke(this);
+                currentLockOn = null;
+            }
         }
     } 
 }

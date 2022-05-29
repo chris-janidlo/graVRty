@@ -20,12 +20,32 @@ namespace GraVRty.Combat
 
         FlashlightBeam currentFocusedBeam;
 
-        protected override void onBeamStay(BeamHitInfo beamHitInfo)
+        protected override void onBeamStay (BeamHitInfo beamHitInfo)
+        {
+            if (!Lockable) duringBeamContact(beamHitInfo);
+        }
+
+        protected override void onBeamExited (FlashlightBeam flashlightBeam)
+        {
+            if (!Lockable) exitingBeamContact(flashlightBeam);
+        }
+
+        protected override void onLockStay (BeamHitInfo beamHitInfo)
+        {
+            if (Lockable) duringBeamContact(beamHitInfo);
+        }
+
+        protected override void onLockExited (FlashlightBeam flashlightBeam)
+        {
+            if (Lockable) exitingBeamContact(flashlightBeam);
+        }
+
+        void duringBeamContact (BeamHitInfo beamHitInfo)
         {
             focusBeam(beamHitInfo);
         }
 
-        protected override void onBeamExited(FlashlightBeam flashlightBeam)
+        void exitingBeamContact (FlashlightBeam flashlightBeam)
         {
             flashlightBeam.ResetDimensions();
             tryKillFocusedBeam();
@@ -35,7 +55,7 @@ namespace GraVRty.Combat
         {
             FlashlightBeam unfocusedBeam = beamHitInfo.SourceBeam;
 
-            if (beamHitInfo.PercentageHit >= m_BeamHitPercentageToTriggerFocusedBeam)
+            if (Lockable || beamHitInfo.PercentageHit >= m_BeamHitPercentageToTriggerFocusedBeam)
             {
                 Vector3 flashlightPosition = unfocusedBeam.transform.position;
 

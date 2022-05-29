@@ -12,7 +12,7 @@ namespace GraVRty.Combat
         public FlashlightBeam SourceBeam { get; private set; }
 
         public float PercentageHit => (float) RayHitCount / TotalRaycasts;
-        public Vector3 Centroid => cumulativeHitPosition / TotalRaycasts;
+        public Vector3 Centroid => cumulativeHitPosition / RayHitCount;
 
         Vector3 cumulativeHitPosition;
 

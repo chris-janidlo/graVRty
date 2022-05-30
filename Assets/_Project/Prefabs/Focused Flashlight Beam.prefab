@@ -7,6 +7,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 81198710125166477, guid: d22abf6b3d0897e428255259715e190d,
+        type: 3}
+      propertyPath: m_Intensity
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 5148887767313559809, guid: d22abf6b3d0897e428255259715e190d,
         type: 3}
       propertyPath: m_Name
@@ -76,6 +81,16 @@ PrefabInstance:
         type: 3}
       propertyPath: coneRadiusStart
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5488033066679278300, guid: d22abf6b3d0897e428255259715e190d,
+        type: 3}
+      propertyPath: intensityInside
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5488033066679278300, guid: d22abf6b3d0897e428255259715e190d,
+        type: 3}
+      propertyPath: intensityOutside
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 8014823862794569791, guid: d22abf6b3d0897e428255259715e190d,
         type: 3}

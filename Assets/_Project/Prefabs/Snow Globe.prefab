@@ -94,8 +94,8 @@ MonoBehaviour:
   FocusedBeamRadius: 0
   m_BeamHitPercentageToTriggerFocusedBeam: 0.5
   m_BeamCutoffFudge: 0.1
-  m_FocusedBeamLengthRange: {x: 1, y: 7}
-  m_FlashlightDistanceClampRange: {x: 0.2, y: 1}
+  m_FocusedBeamLengthRange: {x: 1, y: 10}
+  m_FlashlightDistanceClampRange: {x: 0.2, y: 0.5}
   FocusedFlashlightBeamPool: {fileID: 11400000, guid: 6ada8c26cae4d7546aa8b7fc6f7b0c5b,
     type: 2}
 --- !u!114 &91562756279357173

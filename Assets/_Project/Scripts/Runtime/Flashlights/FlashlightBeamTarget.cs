@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using NaughtyAttributes;
 
-namespace GraVRty.Combat
+namespace GraVRty.Flashlights
 {
     public class FlashlightBeamTarget : MonoBehaviour
     {

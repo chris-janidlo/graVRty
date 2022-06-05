@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using DG.Tweening;
-using GraVRty.Combat;
+using GraVRty.Flashlights;
 using GraVRty.Loading;
 
-namespace GraVRty.Interactables
+namespace GraVRty.Flashlights
 {
     public class Flashlight : MonoBehaviour
     {

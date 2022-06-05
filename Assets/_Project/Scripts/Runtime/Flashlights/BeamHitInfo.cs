@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GraVRty.Combat
+namespace GraVRty.Flashlights
 {
     public struct BeamHitInfo
     {

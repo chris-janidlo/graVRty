@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GraVRty.Combat;
+using GraVRty.Flashlights;
 
 namespace GraVRty.Enemies
 {

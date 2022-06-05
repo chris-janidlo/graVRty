@@ -8,7 +8,7 @@ using UnityEngine.Profiling;
 using crass;
 using NaughtyAttributes;
 
-namespace GraVRty.Combat
+namespace GraVRty.Flashlights
 {
     public class FlashlightBeam : MonoBehaviour
     {

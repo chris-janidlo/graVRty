@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using GraVRty.CorePhysics;
-using GraVRty.Combat;
+using GraVRty.Flashlights;
 
 namespace GraVRty.Interactables
 {

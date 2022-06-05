@@ -2,7 +2,7 @@ using UnityEngine;
 using NaughtyAttributes;
 using GraVRty.Loading;
 
-namespace GraVRty.Combat
+namespace GraVRty.Flashlights
 {
     public class BeamFocuser : FlashlightBeamTarget
     {

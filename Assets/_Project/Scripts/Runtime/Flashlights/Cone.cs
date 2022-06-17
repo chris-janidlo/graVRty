@@ -37,6 +37,8 @@ namespace GraVRty.Flashlights
         [Min(MIN_RADIUS)]
         [SerializeField] float _radius = 1;
 
+        float checkpointAngle, checkpointHeight, checkpointRadius;
+
         public DrivingDimensionCombo DrivingDimensions
         {
             get => _drivingDimensions;
@@ -71,6 +73,20 @@ namespace GraVRty.Flashlights
         }
 
         public void OnAfterDeserialize () { }
+
+        public void SetCheckpoint ()
+        {
+            checkpointAngle = Angle;
+            checkpointHeight = Height;
+            checkpointRadius = Radius;
+        }
+
+        public void ResetToCheckpoint ()
+        {
+            _angle = checkpointAngle;
+            _height = checkpointHeight;
+            _radius = checkpointRadius;
+        }
 
         void tryEditDimension (ref float dimension, float value, bool editable, string variableName, float min = float.NegativeInfinity, float max = float.PositiveInfinity)
         {

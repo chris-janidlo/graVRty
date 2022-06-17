@@ -60,7 +60,7 @@ namespace GraVRty.Flashlights
                 Vector3 flashlightPosition = unfocusedBeam.transform.position;
 
                 float shortenedBeamLength = Vector3.Distance(beamHitInfo.Centroid, flashlightPosition) + m_BeamCutoffFudge;
-                unfocusedBeam.SetDimension(length: shortenedBeamLength);
+                unfocusedBeam.Dimensions.Height = shortenedBeamLength;
 
                 if (currentFocusedBeam == null)
                 {
@@ -69,7 +69,8 @@ namespace GraVRty.Flashlights
 
                 Vector3 reflectionPlaneNormal = (transform.position - flashlightPosition).normalized;
                 currentFocusedBeam.transform.forward = -Vector3.Reflect(unfocusedBeam.transform.forward, reflectionPlaneNormal).normalized;
-                currentFocusedBeam.SetDimension(length: focusedBeamLength(flashlightPosition), radius: FocusedBeamRadius);
+                currentFocusedBeam.Dimensions.Height = focusedBeamLength(flashlightPosition);
+                currentFocusedBeam.Dimensions.Radius = FocusedBeamRadius;
             }
             else
             {

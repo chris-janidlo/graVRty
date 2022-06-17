@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57fb328113560d448b419ca9827dad83, type: 3}
   m_Name: Flashlight Beam Pool
   m_EditorClassIdentifier: 
-  m_Prefab: {fileID: 5148887767313559809, guid: d22abf6b3d0897e428255259715e190d,
+  m_Prefab: {fileID: 8047894010253385856, guid: 90f7fdc1ebbb78e4ebec1306487df87e,
     type: 3}
   m_InstantiationLocation: {x: 1000, y: 1000, z: 1000}
   m_EagerLoadCount: 1

@@ -19,59 +19,13 @@ namespace GraVRty.Flashlights
 
         public enum Direction
         {
+            _Unset,
             PointToBase, BaseToPoint
         }
 
-        [Serializable]
-        public struct Dimensions
-        {
-            [ShowIf("Direction", Direction.PointToBase)]
-            [AllowNesting]
-            public float Angle;
-            [ShowIf("Direction", Direction.BaseToPoint)]
-            [AllowNesting]
-            public float Radius;
-            public float Length;
-            public Direction Direction;
+        public Cone Dimensions;
 
-            public static bool operator == (Dimensions l, Dimensions r)
-            {
-                // should this only use one of Angle or Radius depending on the value of Direction?
-                return
-                    l.Angle == r.Angle &&
-                    l.Radius == r.Radius &&
-                    l.Length == r.Length &&
-                    l.Direction == r.Direction;
-            }
-
-            public static bool operator != (Dimensions l, Dimensions r) => !(l == r);
-
-            public Dimensions (float angle, float radius, float length, Direction direction)
-            {
-                Angle = angle;
-                Radius = radius;
-                Length = length;
-                Direction = direction;
-            }
-
-            public Dimensions With (float? angle = null, float? radius = null, float? length = null, Direction? direction = null)
-            {
-                return new Dimensions(angle ?? Angle, radius ?? Radius, length ?? Length, direction ?? Direction);
-            }
-
-            public override bool Equals(object obj)
-            {
-                return obj is Dimensions other && this == other;
-            }
-
-            public override int GetHashCode()
-            {
-                // should this only use one of Angle or Radius depending on the value of Direction?
-                return (Angle, Radius, Length, Direction).GetHashCode();
-            }
-        }
-
-        [SerializeField] Dimensions m_InitialDimensions;
+        [SerializeField] Direction m_Direction;
         [SerializeField] int m_Raycasts;
 
         [Range(0, 1)]
@@ -81,38 +35,42 @@ namespace GraVRty.Flashlights
         [SerializeField] bool m_DrawDebugRays;
         [SerializeField] EnumMap<RaycastHitState, Color> m_DebugRayColors;
 
-        [SerializeField] Light m_Light;
-        [SerializeField] Transform m_Offset, m_ConeScaler, m_ConePointTransform, m_ConeBaseTransform;
-
-        public Dimensions CurrentDimensions { get; private set; }
+        [SerializeField] AFlashlightBeamVisual m_BeamVisual;
 
         List<Vector3> circlePoints;
         Dictionary<FlashlightBeamTarget, BeamHitInfo> hitDataThisFrame; // create this at class scope to limit GC
         HashSet<FlashlightBeamTarget> targetsHitLastFrame;
         HashSet<FlashlightBeamTarget> targetsToManage;
 
+        Transform coneBaseTransform;
+
         FlashlightBeamTarget currentLockOn;
         Vector3 lockOnCentroid;
 
         void Start ()
         {
-            if (m_Light.type != LightType.Spot)
-            {
-                throw new Exception("Flashlight Light should be a spotlight");
-            }
-
             hitDataThisFrame = new Dictionary<FlashlightBeamTarget, BeamHitInfo>();
             targetsHitLastFrame = new HashSet<FlashlightBeamTarget>();
             targetsToManage = new HashSet<FlashlightBeamTarget>();
 
-            ResetDimensions();
+            Dimensions.SetCheckpoint();
+
             calculateCartesianPoints();
+
+            createBaseTransform();
+            updateBaseTransform();
         }
 
         void FixedUpdate ()
         {
+            updateBaseTransform();
             targetTracking();
             if (currentLockOn != null) followLockOn();
+        }
+
+        void Update ()
+        {
+            m_BeamVisual.SetDimensions(Dimensions);
         }
 
         void OnDisable ()
@@ -122,56 +80,34 @@ namespace GraVRty.Flashlights
 
         public void ResetDimensions ()
         {
-            SetDimensions(m_InitialDimensions);
+            Dimensions.ResetToCheckpoint();
+            updateBaseTransform();
+            m_BeamVisual.SetDimensions(Dimensions);
         }
 
-        public void SetDimensions (Dimensions dimensions)
+        void createBaseTransform ()
         {
-            CurrentDimensions = dimensions;
+            GameObject coneBaseGO = new ("(internal) " + nameof(coneBaseTransform));
 
-            Vector3 position;
-            Quaternion rotation;
+            coneBaseTransform = coneBaseGO.transform;
+            coneBaseTransform.parent = transform;
+        }
 
-            // radius / length = tan(angle)
-            float length = CurrentDimensions.Length;
-            float radius, angle;
+        void updateBaseTransform ()
+        {
+            float
+                radius = Dimensions.Radius,
+                height = Dimensions.Height;
 
-            switch (CurrentDimensions.Direction)
+            Vector3 position = m_Direction switch
             {
-                case Direction.BaseToPoint:
-                    position = Vector3.forward * length;
-                    rotation = Quaternion.Euler(0, 180, 0);
-                    
-                    radius = CurrentDimensions.Radius;
-                    angle = Mathf.Atan(radius / length) * Mathf.Rad2Deg * 2;
-                    break;
+                Direction.BaseToPoint => Vector3.zero,
+                Direction.PointToBase => Vector3.forward * height,
+                _ => throw new ArgumentOutOfRangeException(nameof(m_Direction)),
+            };
 
-                case Direction.PointToBase:
-                    position = Vector3.zero;
-                    rotation = Quaternion.identity;
-
-                    angle = CurrentDimensions.Angle;
-                    radius = length * Mathf.Tan(angle * Mathf.Deg2Rad / 2);
-                    break;
-
-                default:
-                    throw new InvalidOperationException($"{nameof(CurrentDimensions.Direction)} has unexpected {typeof(Direction).Name} value {CurrentDimensions.Direction}");
-            }
-
-            m_Offset.localPosition = position;
-            m_Offset.localRotation = rotation;
-
-            m_Light.range = length;
-            m_Light.spotAngle = angle;
-
-            m_ConeScaler.localScale = new Vector3(radius, radius, CurrentDimensions.Length);
-        }
-
-        public void SetDimension (float? length = null, float? angle = null, float? radius = null, Direction? direction = null)
-        {
-            Dimensions newDimensions = CurrentDimensions.With(length: length, angle: angle, radius: radius, direction: direction);
-            if (newDimensions == CurrentDimensions) return;
-            SetDimensions(newDimensions);
+            coneBaseTransform.localPosition = position;
+            coneBaseTransform.localScale = new Vector3(radius, radius, 1);
         }
 
         void calculateCartesianPoints ()
@@ -224,23 +160,24 @@ namespace GraVRty.Flashlights
 
         void castRay (Vector3 circlePoint)
         {
-            Vector3 circlePointInWorld = m_ConeBaseTransform.TransformPoint(circlePoint);
+            Vector3 basePoint = coneBaseTransform.TransformPoint(circlePoint);
+            Vector3 tipPoint = getTipPosition();
 
             Vector3 startPosition, endPosition;
-            switch (CurrentDimensions.Direction)
+            switch (m_Direction)
             {
                 case Direction.PointToBase:
-                    startPosition = m_ConePointTransform.position;
-                    endPosition = circlePointInWorld;
+                    startPosition = tipPoint;
+                    endPosition = basePoint;
                     break;
 
                 case Direction.BaseToPoint:
-                    startPosition = circlePointInWorld;
-                    endPosition = m_ConePointTransform.position;
+                    startPosition = basePoint;
+                    endPosition = tipPoint;
                     break;
 
                 default:
-                    throw new InvalidOperationException($"{nameof(CurrentDimensions.Direction)} has unexpected {typeof(Direction).Name} value {CurrentDimensions.Direction}");
+                    throw new ArgumentOutOfRangeException(nameof(m_Direction));
             }
 
             Vector3 rayCastDifference = endPosition - startPosition;
@@ -268,6 +205,16 @@ namespace GraVRty.Flashlights
 
             hitDataThisFrame[target] = beamHitInfo.PlusRayHit(rayHitInfo.point);
             targetsToManage.Add(target);
+        }
+
+        Vector3 getTipPosition ()
+        {
+            return m_Direction switch
+            {
+                Direction.PointToBase => transform.position,
+                Direction.BaseToPoint => transform.TransformPoint(Vector3.forward * Dimensions.Height),
+                _ => throw new ArgumentOutOfRangeException(nameof(m_Direction)),
+            };
         }
 
         void drawRay(Vector3 start, Vector3 direction, RaycastHitState hitState)

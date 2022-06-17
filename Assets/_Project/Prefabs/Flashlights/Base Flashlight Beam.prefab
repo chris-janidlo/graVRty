@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5148887767313559809
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5148887767313559814}
+  - component: {fileID: 1316501592722013754}
+  - component: {fileID: 8014823862794569791}
+  m_Layer: 8
+  m_Name: Base Flashlight Beam
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5148887767313559814
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5148887767313559809}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1316501592722013754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5148887767313559809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de11b28c25c722342904278983741ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabName: 
+--- !u!114 &8014823862794569791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5148887767313559809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6a9cd7d38f5237448a24a0285189536, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Dimensions:
+    _drivingDimensions: 0
+    _angle: 90
+    _height: 1
+    _radius: 1
+  m_Direction: 0
+  m_Raycasts: 0
+  m_LockOnStrength: 0.75
+  m_RaycastLayers:
+    serializedVersion: 2
+    m_Bits: 887
+  m_DrawDebugRays: 0
+  m_DebugRayColors:
+    m_enums: 010000000200000000000000
+    m_values:
+    - {r: 0.8235294, g: 0.49019608, b: 0.17254902, a: 1}
+    - {r: 0.8156863, g: 0.27450982, b: 0.28235295, a: 1}
+    - {r: 0.87058824, g: 0.93333334, b: 0.8392157, a: 1}
+  m_BeamVisual: {fileID: 0}

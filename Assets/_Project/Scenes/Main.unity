@@ -10970,7 +10970,7 @@ GameObject:
   - component: {fileID: 1899447670}
   - component: {fileID: 1899447669}
   - component: {fileID: 1899447673}
-  m_Layer: 10
+  m_Layer: 9
   m_Name: Fake bad guy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11092,6 +11092,18 @@ MonoBehaviour:
   OnBeamExited:
     m_PersistentCalls:
       m_Calls: []
+  m_Lockable: 0
+  OnLockEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  OnLockStay:
+    m_PersistentCalls:
+      m_Calls: []
+  OnLockExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_BeamHitPercentageToEnterLock: 0
+  m_BeamHitPercentageToExitLock: 0
 --- !u!1001 &1904743415
 PrefabInstance:
   m_ObjectHideFlags: 0

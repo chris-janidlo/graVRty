@@ -65,7 +65,7 @@ MonoBehaviour:
     _radius: 1
   m_Direction: 0
   m_Raycasts: 0
-  m_LockOnStrength: 0.75
+  m_LockOnStrength: 0.6
   m_RaycastLayers:
     serializedVersion: 2
     m_Bits: 887

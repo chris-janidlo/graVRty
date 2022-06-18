@@ -42,7 +42,7 @@ namespace GraVRty.Flashlights
         HashSet<FlashlightBeamTarget> targetsHitLastFrame;
         HashSet<FlashlightBeamTarget> targetsToManage;
 
-        Transform coneBaseTransform;
+        Transform coneTransform, coneTipTransform, coneBaseTransform;
 
         FlashlightBeamTarget currentLockOn;
         Vector3 lockOnCentroid;
@@ -57,13 +57,13 @@ namespace GraVRty.Flashlights
 
             calculateCartesianPoints();
 
-            createBaseTransform();
-            updateBaseTransform();
+            createConeTransforms();
+            updateConeTransforms();
         }
 
         void FixedUpdate ()
         {
-            updateBaseTransform();
+            updateConeTransforms();
             targetTracking();
             if (currentLockOn != null) followLockOn();
         }
@@ -81,33 +81,52 @@ namespace GraVRty.Flashlights
         public void ResetDimensions ()
         {
             Dimensions.ResetToCheckpoint();
-            updateBaseTransform();
+            updateConeTransforms();
             m_BeamVisual.SetDimensions(Dimensions);
         }
 
-        void createBaseTransform ()
+        void createConeTransforms ()
         {
-            GameObject coneBaseGO = new ("(internal) " + nameof(coneBaseTransform));
+            static Transform node (ref Transform variable, string name, params Transform[] children)
+            {
+                GameObject go = new ("(internal) " + name);
+                variable = go.transform;
 
-            coneBaseTransform = coneBaseGO.transform;
-            coneBaseTransform.parent = transform;
+                foreach (Transform child in children)
+                {
+                    child.parent = variable;
+                }
+                
+                return variable;
+            }
+
+            node(ref coneTransform, nameof(coneTransform),
+                node(ref coneBaseTransform, nameof(coneBaseTransform)),
+                node(ref coneTipTransform, nameof(coneTipTransform))
+            ).parent = transform;
+
+            coneTransform.SetPositionAndRotation(transform.position, transform.rotation);   
+
+            switch (m_Direction)
+            {
+                case Direction.PointToBase:
+                    coneTipTransform.localPosition = Vector3.zero;
+                    coneBaseTransform.localPosition = Vector3.forward;
+                    break;
+
+                case Direction.BaseToPoint:
+                    coneBaseTransform.localPosition = Vector3.zero;
+                    coneTipTransform.localPosition = Vector3.forward;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(m_Direction));
+            }
         }
 
-        void updateBaseTransform ()
+        void updateConeTransforms ()
         {
-            float
-                radius = Dimensions.Radius,
-                height = Dimensions.Height;
-
-            Vector3 position = m_Direction switch
-            {
-                Direction.BaseToPoint => Vector3.zero,
-                Direction.PointToBase => Vector3.forward * height,
-                _ => throw new ArgumentOutOfRangeException(nameof(m_Direction)),
-            };
-
-            coneBaseTransform.localPosition = position;
-            coneBaseTransform.localScale = new Vector3(radius, radius, 1);
+            coneTransform.localScale = new Vector3(Dimensions.Radius, Dimensions.Radius, Dimensions.Height);
         }
 
         void calculateCartesianPoints ()
@@ -161,7 +180,7 @@ namespace GraVRty.Flashlights
         void castRay (Vector3 circlePoint)
         {
             Vector3 basePoint = coneBaseTransform.TransformPoint(circlePoint);
-            Vector3 tipPoint = getTipPosition();
+            Vector3 tipPoint = coneTipTransform.position;
 
             Vector3 startPosition, endPosition;
             switch (m_Direction)
@@ -205,16 +224,6 @@ namespace GraVRty.Flashlights
 
             hitDataThisFrame[target] = beamHitInfo.PlusRayHit(rayHitInfo.point);
             targetsToManage.Add(target);
-        }
-
-        Vector3 getTipPosition ()
-        {
-            return m_Direction switch
-            {
-                Direction.PointToBase => transform.position,
-                Direction.BaseToPoint => transform.TransformPoint(Vector3.forward * Dimensions.Height),
-                _ => throw new ArgumentOutOfRangeException(nameof(m_Direction)),
-            };
         }
 
         void drawRay(Vector3 start, Vector3 direction, RaycastHitState hitState)
@@ -275,16 +284,16 @@ namespace GraVRty.Flashlights
         void followLockOn ()
         {
             Vector3
-                zeroStrengthDirection = transform.parent.forward,
-                fullStrengthDirection = (lockOnCentroid - transform.position).normalized,
+                zeroStrengthDirection = coneTransform.parent.forward,
+                fullStrengthDirection = (lockOnCentroid - coneTransform.position).normalized,
                 lerpedDirection = Vector3.Slerp(zeroStrengthDirection, fullStrengthDirection, m_LockOnStrength);
 
-            transform.forward = lerpedDirection;
+            coneTransform.forward = lerpedDirection;
         }
 
         void stopLockOn ()
         {
-            transform.forward = transform.parent.forward;
+            coneTransform.forward = coneTransform.parent.forward;
             currentLockOn.OnLockExited.Invoke(this);
             currentLockOn = null;
         }

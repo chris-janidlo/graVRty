@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using GraVRty.Loading;
 
 namespace GraVRty.CorePhysics
@@ -10,74 +11,69 @@ namespace GraVRty.CorePhysics
     [CreateAssetMenu(menuName = "GraVRty/Gravity Manager", fileName = "newGravityManager.asset")]
     public class Gravity : Loadable
     {
-        [SerializeField] float m_GravityAcceleration, m_FluxDragMax;
-        [SerializeField] AnimationCurve m_FluxDragLerpByPressStrength, m_FluxDragLerpSpeedByPressStrength;
+        [SerializeField] float m_GravityAcceleration, m_BrakeDragMax;
+        [SerializeField] AnimationCurve m_DragLerpByBrakeStrength, m_DragLerpSpeedByBrakeStrength;
 
         [Range(0, 1)]
-        [SerializeField] float m_FluxPressThreshold, m_FluxHardStopThreshold;
+        [SerializeField] float m_BrakeHardStopThreshold;
+        [SerializeField] float m_BrakeHardStopSpeed;
 
-        public GravityState State { get; private set; }
         public Vector3 Direction { get; private set; }
-        public Quaternion Rotation { get; private set; }
 
-        float dragLerp;
+        float dragLerp, currentGravityAcceleration;
 
         public override IEnumerator LoadRoutine ()
         {
-            State = GravityState.Active;
-            setOrientation(Vector3.up, Quaternion.identity);
+            ReleaseBrakes();
+            SetOrientation(Vector3.down);
             yield break;
         }
 
-        public void SetGravity (Transform directionSource, float strength)
+        public void SetOrientation (Vector3 direction)
         {
-            if (strength >= m_FluxPressThreshold)
+            Direction = direction;
+            updateGravity();
+        }
+
+        public void Brake (float strength)
+        {
+            float targetDragLerp = m_DragLerpByBrakeStrength.Evaluate(strength),
+                dragLerpSpeed = m_DragLerpSpeedByBrakeStrength.Evaluate(strength);
+
+            if (dragLerp < targetDragLerp)
+                dragLerp = Mathf.Min(targetDragLerp, dragLerp + dragLerpSpeed * Time.deltaTime);
+            if (dragLerp > targetDragLerp)
+                dragLerp = Mathf.Max(targetDragLerp, dragLerp - dragLerpSpeed * Time.deltaTime);
+
+            if (strength > m_BrakeHardStopThreshold)
             {
-                updateState(GravityState.Flux);
-
-                float targetDragLerp = m_FluxDragLerpByPressStrength.Evaluate(strength),
-                    dragLerpSpeed = m_FluxDragLerpSpeedByPressStrength.Evaluate(strength);
-
-                if (dragLerp < targetDragLerp)
-                    dragLerp = Mathf.Min(targetDragLerp, dragLerp + dragLerpSpeed * Time.deltaTime);
-                else
-                    dragLerp = Mathf.Max(targetDragLerp, dragLerp - dragLerpSpeed * Time.deltaTime);
-
-                setOrientation(directionSource);
-
-                if (strength >= m_FluxHardStopThreshold) Physics.gravity = Vector3.zero;
+                float delta = m_BrakeHardStopSpeed * Time.deltaTime;
+                currentGravityAcceleration = Mathf.Max(0, currentGravityAcceleration - delta);
             }
             else
             {
-                // ensure that gravity is properly set when the player lets go of their action button. especially useful for preventing situations where letting go of the action button too fast keeps gravity stuck at 0
-                if (State == GravityState.Flux) setOrientation(directionSource);
-
-                updateState(GravityState.Active);
-                dragLerp = 0;
+                currentGravityAcceleration = m_GravityAcceleration;
             }
+
+            updateGravity();
+        }
+
+        public void ReleaseBrakes ()
+        {
+            currentGravityAcceleration = m_GravityAcceleration;
+            dragLerp = 0;
+
+            updateGravity();
         }
 
         public float GetGravitizerDrag (RigidbodyGravitizer gravitizer)
         {
-            return Mathf.Lerp(gravitizer.BaseDrag, m_FluxDragMax, dragLerp);
+            return Mathf.Lerp(gravitizer.BaseDrag, m_BrakeDragMax, dragLerp);
         }
 
-        void setOrientation (Transform source)
+        void updateGravity ()
         {
-            setOrientation(source.up, source.rotation);
-        }
-
-        void setOrientation (Vector3 up, Quaternion rotation)
-        {
-            Direction = -up;
-            Rotation = rotation;
-
-            Physics.gravity = Direction * m_GravityAcceleration;
-        }
-
-        void updateState (GravityState newState)
-        {
-            if (State != newState) State = newState;
+            Physics.gravity = Direction * currentGravityAcceleration;
         }
     }
 }

@@ -30,13 +30,11 @@ namespace GraVRty.Interactables
         {
             if (currentController != null)
             {
-                m_Gravity.SetGravity(m_InsidesParent, currentController.activateInteractionState.value);
+                m_Gravity.SetOrientation(currentController.transform.forward);
+                m_Gravity.Brake(currentController.activateInteractionState.value);
             }
-
-            if (m_Gravity.State == GravityState.Active)
-            {
-                m_InsidesParent.rotation = m_Gravity.Rotation;
-            }
+            
+            m_InsidesParent.up = -m_Gravity.Direction;
         }
 
         public void OnSelectEntered (SelectEnterEventArgs args)
@@ -46,7 +44,9 @@ namespace GraVRty.Interactables
 
         public void OnSelectExited (SelectExitEventArgs args)
         {
-            m_Gravity.SetGravity(m_InsidesParent, 0);
+            m_Gravity.SetOrientation(currentController.transform.forward);
+            m_Gravity.ReleaseBrakes();
+
             currentController = null;
         }
     }

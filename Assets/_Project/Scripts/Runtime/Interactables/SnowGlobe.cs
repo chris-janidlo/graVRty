@@ -5,18 +5,19 @@ using GraVRty.Flashlights;
 
 namespace GraVRty.Interactables
 {
-    public class SnowGlobe : MonoBehaviour
+    public class SnowGlobe : XRBaseInteractable
     {
         [SerializeField] float m_Radius;
 
         [SerializeField] BeamFocuser m_Focuser;
-        [SerializeField] Rigidbody m_Rigidbody;
         [SerializeField] Transform m_InsidesParent, m_Glass;
         [SerializeField] SphereCollider m_SphereCollider;
 
         [SerializeField] Gravity m_Gravity;
 
-        XRBaseController currentController;
+        XRBaseController controller;
+
+        float gasStrength, brakeStrength;
 
         void Start ()
         {
@@ -26,28 +27,75 @@ namespace GraVRty.Interactables
             // TODO: set m_InsidesParent scale
         }
 
-        void Update ()
+        public override void ProcessInteractable(XRInteractionUpdateOrder.UpdatePhase updatePhase)
         {
-            if (currentController != null)
+            base.ProcessInteractable(updatePhase);
+
+            switch (updatePhase)
             {
-                m_Gravity.SetOrientation(currentController.transform.forward);
-                m_Gravity.Brake(currentController.activateInteractionState.value);
+                case XRInteractionUpdateOrder.UpdatePhase.Dynamic:
+                    followController();
+
+                    if (controller != null)
+                    {
+                        pollController();
+                        controlGravity();
+                    }
+
+                    visualizeGravity();
+                    break;
+
+                case XRInteractionUpdateOrder.UpdatePhase.OnBeforeRender:
+                    followController();
+                    break;
             }
-            
+        }
+
+        protected override void OnSelectEntered (SelectEnterEventArgs args)
+        {
+            base.OnSelectEntered(args);
+            updateControllerFromArgs(args);
+        }
+
+        protected override void OnHoverEntered (HoverEnterEventArgs args)
+        {
+            base.OnHoverEntered(args);
+            if (controller == null) updateControllerFromArgs(args);
+        }
+
+        void followController ()
+        {
+            transform.position = interactorsHovering[0].GetAttachTransform(this).position;
+        }
+
+        void updateControllerFromArgs (BaseInteractionEventArgs args)
+        {
+            controller = args.interactorObject.transform.GetComponent<XRBaseController>();
+        }
+
+        void pollController ()
+        {
+            gasStrength = controller.activateInteractionState.value;
+            brakeStrength = controller.selectInteractionState.value;
+        }
+
+        void controlGravity ()
+        {
+            if (gasStrength == 0 && brakeStrength == 0)
+            {
+                m_Gravity.ReleaseBrakes();
+                return;
+            }
+
+            if (gasStrength > 0) m_Gravity.SetOrientation(controller.transform.forward);
+
+            float combinedBrakeStrength = Mathf.Min(1 - gasStrength + brakeStrength, 1);
+            m_Gravity.Brake(combinedBrakeStrength);
+        }
+
+        void visualizeGravity ()
+        {
             m_InsidesParent.up = -m_Gravity.Direction;
-        }
-
-        public void OnSelectEntered (SelectEnterEventArgs args)
-        {
-            currentController = args.interactorObject.transform.GetComponent<XRBaseController>();
-        }
-
-        public void OnSelectExited (SelectExitEventArgs args)
-        {
-            m_Gravity.SetOrientation(currentController.transform.forward);
-            m_Gravity.ReleaseBrakes();
-
-            currentController = null;
         }
     }
 }

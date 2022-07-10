@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "8863d104d9882bcc4df624e11db77874fbdbdd7e"
+      "hash": "94240584df5015bbecc56ca21784fd24c841e14c"
     },
     "com.dbrizov.naughtyattributes": {
       "version": "https://github.com/dbrizov/NaughtyAttributes.git#upm",

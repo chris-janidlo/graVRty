@@ -29,5 +29,10 @@ namespace GraVRty.CorePhysics
                 Drag = drag ?? Drag
             };
         }
+
+        public override string ToString()
+        {
+            return $"gravity: {Direction} * {Amount}, {Drag} drag";
+        }
     }
 }

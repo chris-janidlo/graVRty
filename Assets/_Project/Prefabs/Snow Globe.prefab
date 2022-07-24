@@ -156,19 +156,19 @@ MonoBehaviour:
         inWeight: 0
         outWeight: 0.05691057
       - serializedVersion: 3
-        time: 0.9
-        value: 0.1
-        inSlope: -31.717812
-        outSlope: -31.717812
+        time: 1
+        value: 3
+        inSlope: -18.856464
+        outSlope: -18.856464
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.03455288
+        inWeight: 0.02540648
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     MinBrakeToHardStopGravity: 0.9
-    GravityHardStopSpeed: 1
+    GravityHardStopSpeed: 4
   m_Focuser: {fileID: 6367118867501623593}
   m_InsidesParent: {fileID: 2370480586810438278}
   m_Glass: {fileID: 2370480586969171203}

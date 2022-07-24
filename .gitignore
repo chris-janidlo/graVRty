@@ -64,3 +64,6 @@ sysinfo.txt
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Blender
+*.blend1*

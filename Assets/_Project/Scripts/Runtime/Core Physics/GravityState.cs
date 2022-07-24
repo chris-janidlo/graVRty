@@ -1,17 +1,33 @@
+using UnityEngine;
+
 namespace GraVRty.CorePhysics
 {
-    /// <summary>
-    /// Describes how gravity should be affecting gravitized objects
-    /// </summary>
-    public enum GravityState
+    public struct GravityState
     {
-        /// <summary>
-        /// The default state. Gravitized objects are accelerating in the current direction of gravity
-        /// </summary>
-        Active,
-        /// <summary>
-        /// The player (or someone else?) is currently modifying gravity. All gravitizeed objects are slowing down relative to the previous direction of gravity, and no additional acceleration due to gravity is being applied
-        /// </summary>
-        Flux
+        public Vector3 Direction { get; set; }
+
+        float _amount;
+        public float Amount
+        {
+            get => _amount;
+            set => _amount = Mathf.Clamp01(value);
+        }
+
+        float _drag;
+        public float Drag
+        {
+            get => _drag;
+            set => _drag = Mathf.Clamp01(value);
+        }
+
+        public GravityState With (Vector3? direction = null, float? amount = null, float? drag = null)
+        {
+            return new GravityState
+            {
+                Direction = direction ?? Direction,
+                Amount = amount ?? Amount,
+                Drag = drag ?? Drag
+            };
+        }
     }
 }

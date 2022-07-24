@@ -10,7 +10,9 @@ namespace GraVRty.Interactables
         [SerializeField] float m_Radius;
 
         [Range(0f, 1f)]
-        [SerializeField] float m_MinActivatePressThreshold, m_MinSelectPressThreshold;
+        [SerializeField] float m_GasPressThreshold, m_BrakesPressThreshold;
+
+        [SerializeField] SnowGlobeStats m_Stats;
 
         [SerializeField] BeamFocuser m_Focuser;
         [SerializeField] Transform m_InsidesParent, m_Glass;
@@ -23,8 +25,10 @@ namespace GraVRty.Interactables
 
         struct ControllerState
         {
-            public float GasStrength;
-            public float BrakeStrength;
+            public static ControllerState Inactive = new () { Gas = 0, Brakes = 0 };
+
+            public float Gas;
+            public float Brakes;
         }
 
         void Start ()
@@ -91,42 +95,55 @@ namespace GraVRty.Interactables
 
         ControllerState pollController ()
         {
-            return interactor == null
+            return interactor != null
                 ? new ControllerState
                 {
-                    GasStrength = 0,
-                    BrakeStrength = 0,
+                    Gas = interactor.xrController.activateInteractionState.value,
+                    Brakes = interactor.xrController.selectInteractionState.value
                 }
-                : new ControllerState
-                {
-                    GasStrength = interactor.xrController.activateInteractionState.value,
-                    BrakeStrength = interactor.xrController.selectInteractionState.value
-                };
+                : ControllerState.Inactive;
         }
 
-        void controlGravity (ControllerState state)
+        void controlGravity (ControllerState input)
         {
-            Debug.Log($"{state.GasStrength}, {state.BrakeStrength}");
+            GravityState gravityState = m_Gravity.State;
 
-            bool
-                gasPressed = state.GasStrength >= m_MinActivatePressThreshold,
-                brakePressed = state.BrakeStrength >= m_MinSelectPressThreshold;
-
-            if (!gasPressed && !brakePressed)
+            if (input.Gas >= m_GasPressThreshold)
             {
-                m_Gravity.ReleaseBrakes();
-                return;
+                gravityState.Direction = interactor.transform.forward;
             }
 
-            if (gasPressed) m_Gravity.SetOrientation(interactor.transform.forward);
+            if (input.Brakes >= m_BrakesPressThreshold)
+            {
+                float targetDrag = m_Stats.TargetDragByBrake.Evaluate(input.Brakes),
+                dragChangeSpeed = m_Stats.DragChangeSpeedByBrake.Evaluate(input.Brakes);
 
-            float combinedBrakeStrength = Mathf.Min(1 - state.GasStrength + state.BrakeStrength, 1);
-            m_Gravity.Brake(combinedBrakeStrength);
+                if (gravityState.Drag < targetDrag)
+                    gravityState.Drag = Mathf.Min(targetDrag, gravityState.Drag + dragChangeSpeed * Time.deltaTime);
+                if (gravityState.Drag > targetDrag)
+                    gravityState.Drag = Mathf.Max(targetDrag, gravityState.Drag - dragChangeSpeed * Time.deltaTime);
+            }
+            else
+            {
+                gravityState.Drag = 0;
+            }
+
+            if (gravityState.Drag >= m_Stats.MinBrakeToHardStopGravity)
+            {
+                float delta = m_Stats.GravityHardStopSpeed * Time.deltaTime;
+                gravityState.Amount = Mathf.Max(0, gravityState.Amount - delta);
+            }
+            else
+            {
+                gravityState.Amount = 1;
+            }
+
+            m_Gravity.SetState(gravityState);
         }
 
         void visualizeGravity ()
         {
-            m_InsidesParent.up = -m_Gravity.Direction;
+            m_InsidesParent.up = -m_Gravity.State.Direction;
         }
     }
 }

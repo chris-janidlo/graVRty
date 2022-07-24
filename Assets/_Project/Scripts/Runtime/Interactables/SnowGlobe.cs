@@ -5,18 +5,27 @@ using GraVRty.Flashlights;
 
 namespace GraVRty.Interactables
 {
-    public class SnowGlobe : MonoBehaviour
+    public class SnowGlobe : XRBaseInteractable
     {
         [SerializeField] float m_Radius;
 
+        [Range(0f, 1f)]
+        [SerializeField] float m_MinActivatePressThreshold, m_MinSelectPressThreshold;
+
         [SerializeField] BeamFocuser m_Focuser;
-        [SerializeField] Rigidbody m_Rigidbody;
         [SerializeField] Transform m_InsidesParent, m_Glass;
         [SerializeField] SphereCollider m_SphereCollider;
 
         [SerializeField] Gravity m_Gravity;
 
-        XRBaseController currentController;
+        XRBaseControllerInteractor interactor;
+        bool interactorPreviouslyAllowedHover;
+
+        struct ControllerState
+        {
+            public float GasStrength;
+            public float BrakeStrength;
+        }
 
         void Start ()
         {
@@ -26,28 +35,98 @@ namespace GraVRty.Interactables
             // TODO: set m_InsidesParent scale
         }
 
-        void Update ()
+        public override void ProcessInteractable (XRInteractionUpdateOrder.UpdatePhase updatePhase)
         {
-            if (currentController != null)
+            base.ProcessInteractable(updatePhase);
+
+            switch (updatePhase)
             {
-                m_Gravity.SetOrientation(currentController.transform.forward);
-                m_Gravity.Brake(currentController.activateInteractionState.value);
+                case XRInteractionUpdateOrder.UpdatePhase.Dynamic:
+                    tryFollowController();
+
+                    controlGravity(pollController());
+                    visualizeGravity();
+                    break;
+
+                case XRInteractionUpdateOrder.UpdatePhase.OnBeforeRender:
+                    tryFollowController();
+                    break;
             }
-            
+        }
+
+        protected override void OnSelectEntered (SelectEnterEventArgs args)
+        {
+            base.OnSelectEntered(args);
+            updateInteractor(args);
+        }
+
+        protected override void OnHoverEntered (HoverEnterEventArgs args)
+        {
+            base.OnHoverEntered(args);
+            if (interactor == null) updateInteractor(args);
+        }
+
+        void tryFollowController ()
+        {
+            if (interactor == null) return;
+
+            transform.position = interactor.GetAttachTransform(this).position;
+        }
+
+        void updateInteractor (BaseInteractionEventArgs args)
+        {
+            XRBaseControllerInteractor newInteractor = args.interactorObject as XRBaseControllerInteractor;
+            if (newInteractor == interactor) return;
+
+            if (interactor != null)
+            {
+                interactor.allowHover = interactorPreviouslyAllowedHover;
+            }
+
+            interactor = newInteractor;
+
+            interactorPreviouslyAllowedHover = interactor.allowHover;
+            interactor.allowHover = false;
+        }
+
+        ControllerState pollController ()
+        {
+            return interactor == null
+                ? new ControllerState
+                {
+                    GasStrength = 0,
+                    BrakeStrength = 0,
+                }
+                : new ControllerState
+                {
+                    GasStrength = interactor.xrController.activateInteractionState.value,
+                    BrakeStrength = interactor.xrController.selectInteractionState.value
+                };
+        }
+
+        void controlGravity (ControllerState state)
+        {
+            Debug.Log($"{state.GasStrength}, {state.BrakeStrength}");
+
+            bool
+                gasPressed = state.GasStrength >= m_MinActivatePressThreshold,
+                brakePressed = state.BrakeStrength >= m_MinSelectPressThreshold;
+
+            if (!gasPressed && !brakePressed)
+            {
+                m_Gravity.ReleaseBrakes();
+                return;
+            }
+
+            if (gasPressed) m_Gravity.SetOrientation(interactor.transform.forward);
+
+            float combinedBrakeStrength = Mathf.Min(1 - state.GasStrength + state.BrakeStrength, 1);
+            m_Gravity.Brake(combinedBrakeStrength);
+        }
+
+        void visualizeGravity ()
+        {
             m_InsidesParent.up = -m_Gravity.Direction;
-        }
-
-        public void OnSelectEntered (SelectEnterEventArgs args)
-        {
-            currentController = args.interactorObject.transform.GetComponent<XRBaseController>();
-        }
-
-        public void OnSelectExited (SelectExitEventArgs args)
-        {
-            m_Gravity.SetOrientation(currentController.transform.forward);
-            m_Gravity.ReleaseBrakes();
-
-            currentController = null;
         }
     }
 }

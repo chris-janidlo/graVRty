@@ -201,7 +201,7 @@ namespace GraVRty.Flashlights
 
             Vector3 rayCastDifference = endPosition - startPosition;
 
-            if (!Physics.Raycast(startPosition, rayCastDifference.normalized, out RaycastHit rayHitInfo, rayCastDifference.magnitude, m_RaycastLayers))
+            if (!Physics.Raycast(startPosition, rayCastDifference.normalized, out RaycastHit rayHitInfo, rayCastDifference.magnitude, m_RaycastLayers, QueryTriggerInteraction.Collide))
             {
                 drawRay(startPosition, rayCastDifference, RaycastHitState.Missed);
                 return;

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using GraVRty.CorePhysics;
@@ -14,6 +15,9 @@ namespace GraVRty.Interactables
 
         [SerializeField] SnowGlobeStats m_Stats;
 
+        // TODO: expose this as a configuration option stored in PlayerPrefs
+        [SerializeField] ControlMode m_ControlMode;
+
         [SerializeField] BeamFocuser m_Focuser;
         [SerializeField] Transform m_InsidesParent, m_Glass;
         [SerializeField] SphereCollider m_SphereCollider;
@@ -22,6 +26,12 @@ namespace GraVRty.Interactables
 
         XRBaseControllerInteractor interactor;
         bool interactorPreviouslyAllowedHover;
+
+        public enum ControlMode
+        {
+            ActivateIsGasSelectIsBrakes,
+            ActivateIsBrakesSelectIsGas
+        }
 
         struct ControllerState
         {
@@ -95,13 +105,30 @@ namespace GraVRty.Interactables
 
         ControllerState pollController ()
         {
-            return interactor != null
-                ? new ControllerState
-                {
-                    Gas = interactor.xrController.activateInteractionState.value,
-                    Brakes = interactor.xrController.selectInteractionState.value
-                }
-                : ControllerState.Inactive;
+            if (interactor == null) return ControllerState.Inactive;
+
+            float
+                activate = interactor.xrController.activateInteractionState.value,
+                select = interactor.xrController.selectInteractionState.value;
+
+            float gas, brakes;
+            switch (m_ControlMode)
+            {
+                case ControlMode.ActivateIsGasSelectIsBrakes:
+                    gas = activate;
+                    brakes = select;
+                    break;
+
+                case ControlMode.ActivateIsBrakesSelectIsGas:
+                    gas = select;
+                    brakes = activate;
+                    break;
+
+                default:
+                    throw new InvalidOperationException(m_ControlMode.ToString());
+            }
+
+            return new ControllerState { Gas = gas, Brakes = brakes };
         }
 
         void controlGravity (ControllerState input)

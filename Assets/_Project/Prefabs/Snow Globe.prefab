@@ -169,6 +169,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     MinBrakeToHardStopGravity: 0.9
     GravityHardStopSpeed: 4
+  m_ControlMode: 1
   m_Focuser: {fileID: 6367118867501623593}
   m_InsidesParent: {fileID: 2370480586810438278}
   m_Glass: {fileID: 2370480586969171203}

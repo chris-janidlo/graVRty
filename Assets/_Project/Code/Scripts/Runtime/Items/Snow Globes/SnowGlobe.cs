@@ -35,8 +35,6 @@ namespace GraVRty.Items.SnowGlobes
 
         struct ControllerState
         {
-            public static ControllerState Inactive = new () { Gas = 0, Brakes = 0 };
-
             public float Gas;
             public float Brakes;
         }
@@ -58,7 +56,7 @@ namespace GraVRty.Items.SnowGlobes
                 case XRInteractionUpdateOrder.UpdatePhase.Dynamic:
                     tryFollowController();
 
-                    controlGravity(pollController());
+                    if (interactor != null) controlGravity(pollController());
                     visualizeGravity();
                     break;
 
@@ -105,8 +103,6 @@ namespace GraVRty.Items.SnowGlobes
 
         ControllerState pollController ()
         {
-            if (interactor == null) return ControllerState.Inactive;
-
             float
                 activate = interactor.xrController.activateInteractionState.value,
                 select = interactor.xrController.selectInteractionState.value;

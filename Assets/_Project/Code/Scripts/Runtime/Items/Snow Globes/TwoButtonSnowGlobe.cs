@@ -6,7 +6,7 @@ using GraVRty.Items.Flashlights;
 
 namespace GraVRty.Items.SnowGlobes
 {
-    public class SnowGlobe : XRBaseInteractable
+    public class TwoButtonSnowGlobe : XRBaseInteractable
     {
         [SerializeField] float m_Radius;
 

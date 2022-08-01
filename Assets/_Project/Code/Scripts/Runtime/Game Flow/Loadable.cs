@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GraVRty.Loading
+namespace GraVRty.GameFlow
 {
     public abstract class Loadable : ScriptableObject
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 using NaughtyAttributes;
-using GraVRty.Loading;
+using GraVRty.GameFlow;
 
 namespace GraVRty.Items.Flashlights
 {

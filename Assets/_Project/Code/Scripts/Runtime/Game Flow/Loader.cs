@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityAtoms.BaseAtoms;
 using DG.Tweening;
 
-namespace GraVRty.Loading
+namespace GraVRty.GameFlow
 {
     public class Loader : MonoBehaviour
     {

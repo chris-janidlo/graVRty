@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using DG.Tweening;
 using GraVRty.Items.Flashlights;
-using GraVRty.Loading;
+using GraVRty.GameFlow;
 
 namespace GraVRty.Items.Flashlights
 {

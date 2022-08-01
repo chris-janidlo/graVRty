@@ -109,6 +109,7 @@ MonoBehaviour:
   m_InsidesParent: {fileID: 2370480586810438278}
   m_Glass: {fileID: 2370480586969171203}
   m_SphereCollider: {fileID: 7987191365559741610}
+  m_Pauser: {fileID: 11400000, guid: aa1047af9e7ec0441b91c274d4917118, type: 2}
   m_GravityManager: {fileID: 11400000, guid: ce038ebd21d1286438a15c6becfe5d36, type: 2}
 --- !u!114 &5444643487311935177
 MonoBehaviour:

@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-using GraVRty.Items.Flashlights;
 using GraVRty.Gravity;
+using GraVRty.GameFlow;
+using GraVRty.Items.Flashlights;
 
 namespace GraVRty.Items.SnowGlobes
 {
+    // FIXME: make this work when paused
     public class OneButtonSnowGlobe : MonoBehaviour
     {
         [SerializeField] float m_Radius;
@@ -19,9 +21,11 @@ namespace GraVRty.Items.SnowGlobes
         [SerializeField] Transform m_InsidesParent, m_Glass;
         [SerializeField] SphereCollider m_SphereCollider;
 
+        [SerializeField] Pauser m_Pauser;
         [SerializeField] GravityManager m_GravityManager;
 
         XRBaseController currentController;
+        bool paused;
 
         void Start ()
         {
@@ -40,12 +44,15 @@ namespace GraVRty.Items.SnowGlobes
 
         public void OnSelectEntered (SelectEnterEventArgs args)
         {
+            m_Pauser.Unpause();
+
             currentController = args.interactorObject.transform.GetComponent<XRBaseController>();
         }
 
+        // FIXME: if you fall fast enough and then drop the snow globe, you can't seem to pick it up anymore
         public void OnSelectExited (SelectExitEventArgs args)
         {
-            m_GravityManager.SetState(m_GravityManager.State.With(amount: 1, drag: 0));
+            m_Pauser.Pause();
 
             currentController = null;
         }

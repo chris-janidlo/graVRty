@@ -52,6 +52,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4f3a345680f788f40bd9d6f6cf9a1634, type: 2}
   - {fileID: 11400000, guid: 6ada8c26cae4d7546aa8b7fc6f7b0c5b, type: 2}
   - {fileID: 11400000, guid: ce038ebd21d1286438a15c6becfe5d36, type: 2}
+  - {fileID: 11400000, guid: aa1047af9e7ec0441b91c274d4917118, type: 2}
   m_FadeHelmet: {fileID: 7803961857035852667}
 --- !u!33 &668922284597630363
 MeshFilter:

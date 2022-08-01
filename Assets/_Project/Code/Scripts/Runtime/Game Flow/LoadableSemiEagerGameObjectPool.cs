@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-namespace GraVRty.Loading
+namespace GraVRty.GameFlow
 {
     [CreateAssetMenu(menuName = "GraVRty/Loadables/Semi-Eager GameObject Pool")]
     public class LoadableSemiEagerGameObjectPool : Loadable, IObjectPool<GameObject>

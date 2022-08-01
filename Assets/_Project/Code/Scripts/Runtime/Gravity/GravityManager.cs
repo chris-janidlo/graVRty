@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
-using GraVRty.Loading;
+using GraVRty.GameFlow;
 
 namespace GraVRty.Gravity
 {

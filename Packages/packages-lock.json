@@ -14,71 +14,93 @@
       "dependencies": {},
       "hash": "8a8fa5a9659a6d63f196391c71e06c4286c8acd7"
     },
-    "com.mambojambostudios.unity-atoms-base-atoms": {
-      "version": "4.1.0",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.mambojambostudios.unity-atoms-core": "4.1.0"
-      },
-      "url": "https://registry.npmjs.org"
-    },
-    "com.mambojambostudios.unity-atoms-core": {
-      "version": "4.1.0",
-      "depth": 0,
+    "com.realitystop.linkmerge": {
+      "version": "1.0.0",
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
-      "url": "https://registry.npmjs.org"
+      "url": "https://package.openupm.com"
     },
-    "com.mambojambostudios.unity-atoms-fsm": {
-      "version": "4.1.0",
+    "com.unity-atoms.unity-atoms-base-atoms": {
+      "version": "4.4.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.mambojambostudios.unity-atoms-core": "4.1.0",
-        "com.mambojambostudios.unity-atoms-base-atoms": "4.1.0"
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.modules.physics2d": "1.0.0",
+        "com.unity-atoms.unity-atoms-core": "4.4.5"
       },
-      "url": "https://registry.npmjs.org"
+      "url": "https://package.openupm.com"
     },
-    "com.mambojambostudios.unity-atoms-mono-hooks": {
-      "version": "4.1.0",
+    "com.unity-atoms.unity-atoms-core": {
+      "version": "4.4.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.mambojambostudios.unity-atoms-core": "4.1.0",
-        "com.mambojambostudios.unity-atoms-base-atoms": "4.1.0"
+        "com.unity.modules.uielements": "1.0.0"
       },
-      "url": "https://registry.npmjs.org"
+      "url": "https://package.openupm.com"
     },
-    "com.mambojambostudios.unity-atoms-scene-mgmt": {
-      "version": "4.1.0",
+    "com.unity-atoms.unity-atoms-fsm": {
+      "version": "4.4.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.mambojambostudios.unity-atoms-core": "4.1.0",
-        "com.mambojambostudios.unity-atoms-base-atoms": "4.1.0"
+        "com.unity-atoms.unity-atoms-core": "4.4.5",
+        "com.unity-atoms.unity-atoms-base-atoms": "4.4.5"
       },
-      "url": "https://registry.npmjs.org"
+      "url": "https://package.openupm.com"
     },
-    "com.mambojambostudios.unity-atoms-tags": {
-      "version": "4.1.0",
+    "com.unity-atoms.unity-atoms-mobile": {
+      "version": "4.4.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.mambojambostudios.unity-atoms-core": "4.1.0",
-        "com.mambojambostudios.unity-atoms-base-atoms": "4.1.0"
+        "com.unity-atoms.unity-atoms-core": "4.4.5",
+        "com.unity-atoms.unity-atoms-base-atoms": "4.4.5"
       },
-      "url": "https://registry.npmjs.org"
+      "url": "https://package.openupm.com"
     },
-    "com.mambojambostudios.unity-atoms-ui": {
-      "version": "4.1.0",
+    "com.unity-atoms.unity-atoms-mono-hooks": {
+      "version": "4.4.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.mambojambostudios.unity-atoms-core": "4.1.0",
-        "com.mambojambostudios.unity-atoms-base-atoms": "4.1.0"
+        "com.unity.ugui": "1.0.0",
+        "com.unity-atoms.unity-atoms-core": "4.4.5",
+        "com.unity-atoms.unity-atoms-base-atoms": "4.4.5"
       },
-      "url": "https://registry.npmjs.org"
+      "url": "https://package.openupm.com"
+    },
+    "com.unity-atoms.unity-atoms-scene-mgmt": {
+      "version": "4.4.5",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity-atoms.unity-atoms-core": "4.4.5",
+        "com.unity-atoms.unity-atoms-base-atoms": "4.4.5"
+      },
+      "url": "https://package.openupm.com"
+    },
+    "com.unity-atoms.unity-atoms-tags": {
+      "version": "4.4.5",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity-atoms.unity-atoms-core": "4.4.5",
+        "com.unity-atoms.unity-atoms-base-atoms": "4.4.5"
+      },
+      "url": "https://package.openupm.com"
+    },
+    "com.unity-atoms.unity-atoms-ui": {
+      "version": "4.4.5",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity-atoms.unity-atoms-core": "4.4.5",
+        "com.unity-atoms.unity-atoms-base-atoms": "4.4.5"
+      },
+      "url": "https://package.openupm.com"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -253,6 +275,16 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "com.unity.visualscripting": {
+      "version": "1.7.8",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0",
+        "com.unity.modules.jsonserialize": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.xr.core-utils": {
       "version": "2.0.0-pre.6",
       "depth": 1,
@@ -308,6 +340,17 @@
         "com.unity.xr.management": "4.2.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "me.guyl.atoms-vs": {
+      "version": "2.0.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.visualscripting": "1.7.6",
+        "com.unity-atoms.unity-atoms-base-atoms": "4.4.2",
+        "com.realitystop.linkmerge": "1.0.0"
+      },
+      "url": "https://package.openupm.com"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
